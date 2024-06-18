@@ -8,7 +8,7 @@
  */
 namespace gamboamartin\ks_ops\controllers;
 
-final class controlador_adm_grupo extends \gamboamartin\acl\controllers\controlador_adm_grupo {
+final class controlador_adm_accion_grupo extends \gamboamartin\acl\controllers\controlador_adm_accion_grupo {
 
 
 

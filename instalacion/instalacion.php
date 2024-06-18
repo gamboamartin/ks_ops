@@ -3,7 +3,6 @@ namespace gamboamartin\ks_ops\instalacion;
 
 
 use gamboamartin\administrador\instalacion\_adm;
-use gamboamartin\administrador\models\adm_accion;
 use gamboamartin\errores\errores;
 use PDO;
 use stdClass;
