@@ -139,7 +139,128 @@ class instalacion
         }
         $result->adm_usuario = $adm_usuario;
 
+        $not_emisor = $this->not_emisor(link: $link);
+        if(errores::$error){
+            return (new errores())->error(mensaje: 'Error al ajustar not_emisor', data:  $not_emisor);
+        }
+        $result->not_emisor = $not_emisor;
+
+        $pr_etapa = $this->pr_etapa(link: $link);
+        if(errores::$error){
+            return (new errores())->error(mensaje: 'Error al ajustar pr_etapa', data:  $pr_etapa);
+        }
+        $result->pr_etapa_proceso = $pr_etapa;
+
+        $pr_proceso = $this->pr_proceso(link: $link);
+        if(errores::$error){
+            return (new errores())->error(mensaje: 'Error al ajustar pr_proceso', data:  $pr_proceso);
+        }
+        $result->pr_proceso = $pr_proceso;
+
+
+        $pr_etapa_proceso = $this->pr_etapa_proceso(link: $link);
+        if(errores::$error){
+            return (new errores())->error(mensaje: 'Error al ajustar not_emisor', data:  $pr_etapa_proceso);
+        }
+        $result->pr_etapa_proceso = $pr_etapa_proceso;
+
         return $result;
+
+    }
+
+    private function not_emisor(PDO $link): array|stdClass
+    {
+
+        $adm_menu_descripcion = 'NOTIFICACIONES';
+        $adm_sistema_descripcion = 'ks_ops';
+        $etiqueta_label = 'Secciones';
+        $adm_seccion_pertenece_descripcion = __FUNCTION__;
+        $adm_namespace_name = 'gamboamartin/ks_ops';
+        $adm_namespace_descripcion = 'gamboa.martin/ks_ops';
+
+        $adm_acciones_basicas = (new _adm())->acl_base(adm_menu_descripcion: $adm_menu_descripcion,
+            adm_namespace_descripcion:  $adm_namespace_descripcion,adm_namespace_name:  $adm_namespace_name,
+            adm_seccion_descripcion: __FUNCTION__,
+            adm_seccion_pertenece_descripcion:  $adm_seccion_pertenece_descripcion,
+            adm_sistema_descripcion:  $adm_sistema_descripcion, etiqueta_label: $etiqueta_label,link:  $link);
+        if(errores::$error){
+            return (new errores())->error(mensaje: 'Error al obtener acciones basicas', data:  $adm_acciones_basicas);
+        }
+
+
+        return $adm_acciones_basicas;
+
+    }
+
+    private function pr_etapa(PDO $link): array|stdClass
+    {
+
+        $adm_menu_descripcion = 'PROCESOS';
+        $adm_sistema_descripcion = 'ks_ops';
+        $etiqueta_label = 'Etapa';
+        $adm_seccion_pertenece_descripcion = __FUNCTION__;
+        $adm_namespace_name = 'gamboamartin/ks_ops';
+        $adm_namespace_descripcion = 'gamboa.martin/ks_ops';
+
+        $adm_acciones_basicas = (new _adm())->acl_base(adm_menu_descripcion: $adm_menu_descripcion,
+            adm_namespace_descripcion:  $adm_namespace_descripcion,adm_namespace_name:  $adm_namespace_name,
+            adm_seccion_descripcion: __FUNCTION__,
+            adm_seccion_pertenece_descripcion:  $adm_seccion_pertenece_descripcion,
+            adm_sistema_descripcion:  $adm_sistema_descripcion, etiqueta_label: $etiqueta_label,link:  $link);
+        if(errores::$error){
+            return (new errores())->error(mensaje: 'Error al obtener acciones basicas', data:  $adm_acciones_basicas);
+        }
+
+
+        return $adm_acciones_basicas;
+
+    }
+
+    private function pr_etapa_proceso(PDO $link): array|stdClass
+    {
+
+        $adm_menu_descripcion = 'PROCESOS';
+        $adm_sistema_descripcion = 'ks_ops';
+        $etiqueta_label = 'Etapa Proceso';
+        $adm_seccion_pertenece_descripcion = __FUNCTION__;
+        $adm_namespace_name = 'gamboamartin/ks_ops';
+        $adm_namespace_descripcion = 'gamboa.martin/ks_ops';
+
+        $adm_acciones_basicas = (new _adm())->acl_base(adm_menu_descripcion: $adm_menu_descripcion,
+            adm_namespace_descripcion:  $adm_namespace_descripcion,adm_namespace_name:  $adm_namespace_name,
+            adm_seccion_descripcion: __FUNCTION__,
+            adm_seccion_pertenece_descripcion:  $adm_seccion_pertenece_descripcion,
+            adm_sistema_descripcion:  $adm_sistema_descripcion, etiqueta_label: $etiqueta_label,link:  $link);
+        if(errores::$error){
+            return (new errores())->error(mensaje: 'Error al obtener acciones basicas', data:  $adm_acciones_basicas);
+        }
+
+
+        return $adm_acciones_basicas;
+
+    }
+
+    private function pr_proceso(PDO $link): array|stdClass
+    {
+
+        $adm_menu_descripcion = 'PROCESOS';
+        $adm_sistema_descripcion = 'ks_ops';
+        $etiqueta_label = 'Proceso';
+        $adm_seccion_pertenece_descripcion = __FUNCTION__;
+        $adm_namespace_name = 'gamboamartin/ks_ops';
+        $adm_namespace_descripcion = 'gamboa.martin/ks_ops';
+
+        $adm_acciones_basicas = (new _adm())->acl_base(adm_menu_descripcion: $adm_menu_descripcion,
+            adm_namespace_descripcion:  $adm_namespace_descripcion,adm_namespace_name:  $adm_namespace_name,
+            adm_seccion_descripcion: __FUNCTION__,
+            adm_seccion_pertenece_descripcion:  $adm_seccion_pertenece_descripcion,
+            adm_sistema_descripcion:  $adm_sistema_descripcion, etiqueta_label: $etiqueta_label,link:  $link);
+        if(errores::$error){
+            return (new errores())->error(mensaje: 'Error al obtener acciones basicas', data:  $adm_acciones_basicas);
+        }
+
+
+        return $adm_acciones_basicas;
 
     }
 

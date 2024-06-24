@@ -9,7 +9,7 @@
 namespace gamboamartin\ks_ops\controllers;
 
 
-final class controlador_adm_usuario extends \gamboamartin\notificaciones\controllers\controlador_adm_usuario {
+final class controlador_pr_etapa_proceso extends \gamboamartin\proceso\controllers\controlador_pr_etapa_proceso {
 
 
 }

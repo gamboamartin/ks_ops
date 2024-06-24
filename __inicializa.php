@@ -25,6 +25,45 @@ if(errores::$error){
     exit;
 }
 
+$proceso = new \gamboamartin\proceso\instalacion\instalacion();
+
+$instala = $proceso->instala(link: $link);
+if(errores::$error){
+    if($link->inTransaction()) {
+        $link->rollBack();
+    }
+    $error = (new errores())->error(mensaje: 'Error al instalar proceso', data: $instala);
+    print_r($error);
+    exit;
+}
+
+$documento = new \gamboamartin\documento\instalacion\instalacion();
+
+$instala = $documento->instala(link: $link);
+if(errores::$error){
+    if($link->inTransaction()) {
+        $link->rollBack();
+    }
+    $error = (new errores())->error(mensaje: 'Error al instalar documento', data: $instala);
+    print_r($error);
+    exit;
+}
+
+
+$notificaciones = new gamboamartin\notificaciones\instalacion\instalacion();
+
+$instala = $notificaciones->instala(link: $link);
+if(errores::$error){
+    if($link->inTransaction()) {
+        $link->rollBack();
+    }
+    $error = (new errores())->error(mensaje: 'Error al instalar notificaciones', data: $instala);
+    print_r($error);
+    exit;
+}
+
+
+
 
 $ks_ops = new instalacion();
 
