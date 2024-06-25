@@ -63,6 +63,44 @@ if(errores::$error){
 }
 
 
+$direcciones = new gamboamartin\direccion_postal\instalacion\instalacion();
+
+$instala = $direcciones->instala(link: $link);
+if(errores::$error){
+    if($link->inTransaction()) {
+        $link->rollBack();
+    }
+    $error = (new errores())->error(mensaje: 'Error al instalar direcciones', data: $instala);
+    print_r($error);
+    exit;
+}
+
+$cat_sat = new gamboamartin\cat_sat\instalacion\instalacion(link: $link);
+
+$instala = $cat_sat->instala(link: $link);
+if(errores::$error){
+    if($link->inTransaction()) {
+        $link->rollBack();
+    }
+    $error = (new errores())->error(mensaje: 'Error al instalar cat_sat', data: $instala);
+    print_r($error);
+    exit;
+}
+
+
+$comercial = new gamboamartin\comercial\instalacion\instalacion();
+
+$instala = $comercial->instala(link: $link);
+if(errores::$error){
+    if($link->inTransaction()) {
+        $link->rollBack();
+    }
+    $error = (new errores())->error(mensaje: 'Error al instalar comercial', data: $instala);
+    print_r($error);
+    exit;
+}
+
+
 
 
 $ks_ops = new instalacion();
