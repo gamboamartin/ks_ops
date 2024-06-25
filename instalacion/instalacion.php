@@ -145,6 +145,12 @@ class instalacion
         }
         $result->not_emisor = $not_emisor;
 
+        $not_rel_mensaje = $this->not_rel_mensaje(link: $link);
+        if(errores::$error){
+            return (new errores())->error(mensaje: 'Error al ajustar not_rel_mensaje', data:  $not_rel_mensaje);
+        }
+        $result->not_rel_mensaje = $not_rel_mensaje;
+
         $pr_etapa = $this->pr_etapa(link: $link);
         if(errores::$error){
             return (new errores())->error(mensaje: 'Error al ajustar pr_etapa', data:  $pr_etapa);
@@ -173,7 +179,31 @@ class instalacion
 
         $adm_menu_descripcion = 'NOTIFICACIONES';
         $adm_sistema_descripcion = 'ks_ops';
-        $etiqueta_label = 'Secciones';
+        $etiqueta_label = 'Emisores';
+        $adm_seccion_pertenece_descripcion = __FUNCTION__;
+        $adm_namespace_name = 'gamboamartin/ks_ops';
+        $adm_namespace_descripcion = 'gamboa.martin/ks_ops';
+
+        $adm_acciones_basicas = (new _adm())->acl_base(adm_menu_descripcion: $adm_menu_descripcion,
+            adm_namespace_descripcion:  $adm_namespace_descripcion,adm_namespace_name:  $adm_namespace_name,
+            adm_seccion_descripcion: __FUNCTION__,
+            adm_seccion_pertenece_descripcion:  $adm_seccion_pertenece_descripcion,
+            adm_sistema_descripcion:  $adm_sistema_descripcion, etiqueta_label: $etiqueta_label,link:  $link);
+        if(errores::$error){
+            return (new errores())->error(mensaje: 'Error al obtener acciones basicas', data:  $adm_acciones_basicas);
+        }
+
+
+        return $adm_acciones_basicas;
+
+    }
+
+    private function not_rel_mensaje(PDO $link): array|stdClass
+    {
+
+        $adm_menu_descripcion = 'NOTIFICACIONES';
+        $adm_sistema_descripcion = 'ks_ops';
+        $etiqueta_label = 'Relacion de Mensajes';
         $adm_seccion_pertenece_descripcion = __FUNCTION__;
         $adm_namespace_name = 'gamboamartin/ks_ops';
         $adm_namespace_descripcion = 'gamboa.martin/ks_ops';
