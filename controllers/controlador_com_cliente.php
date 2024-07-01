@@ -10,6 +10,7 @@
 namespace gamboamartin\ks_ops\controllers;
 
 use gamboamartin\errores\errores;
+use gamboamartin\ks_ops\models\com_rel_agente_cliente;
 use stdClass;
 
 final class controlador_com_cliente extends \gamboamartin\comercial\controllers\controlador_com_cliente
@@ -63,8 +64,15 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
                 ws: $ws);
         }
 
+        $relacion = (new com_rel_agente_cliente(link: $this->link))->filtro_and(filtro: array('com_cliente.id' => $this->registro['com_cliente_id']));
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al obtener relacion', data: $relacion, header: $header, ws: $ws);
+        }
+
+        $id_selected = $relacion->n_registros > 0 ? $relacion->registros[0]['com_agente_id'] : -1;
+
         $keys_selects = $this->key_select(cols: 12, con_registros: true, filtro: array(), key: 'com_agente_id',
-            keys_selects: $keys_selects, id_selected: -1, label: 'Agente');
+            keys_selects: $keys_selects, id_selected: $id_selected, label: 'Agente');
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
         }
