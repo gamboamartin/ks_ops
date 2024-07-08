@@ -182,10 +182,7 @@ class instalacion
             return (new errores())->error(mensaje: 'Error al obtener acciones basicas', data:  $adm_acciones_basicas);
         }
 
-
         return $adm_acciones_basicas;
-
-
 
     }
 
