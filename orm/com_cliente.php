@@ -30,10 +30,28 @@ class com_cliente extends \gamboamartin\comercial\models\com_cliente {
 
     }
 
+    final public function elimina_bd(int $id): array|stdClass
+    {
+        $filtro['com_cliente_id'] = $id;
+        $del = (new ks_cliente(link: $this->link))->elimina_con_filtro_and(filtro: $filtro);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al eliminar ks_cliente',data:  $del);
+        }
+        $del = parent::elimina_bd(id: $id);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al eliminar cliente',data:  $del);
+        }
+
+        return $del;
+
+
+    }
+
     private function ks_cliente_ins(int $cat_sat_actividad_economica_id, int $com_cliente_id): array
     {
         $ks_cliente_ins['com_cliente_id'] = $com_cliente_id;
         $ks_cliente_ins['cat_sat_actividad_economica_id'] = $cat_sat_actividad_economica_id;
+
 
         return $ks_cliente_ins;
 
