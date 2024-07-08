@@ -100,6 +100,8 @@ if(errores::$error){
     exit;
 }
 
+
+
 $ks_ops = new instalacion();
 
 $instala = $ks_ops->instala(link: $link);

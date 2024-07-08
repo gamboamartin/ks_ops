@@ -109,6 +109,32 @@ class instalacion
 
     }
 
+    private function cat_sat_actividad_economica(PDO $link): array|stdClass
+    {
+
+        $adm_menu_descripcion = 'Generales';
+        $adm_sistema_descripcion = 'ks_ops';
+        $etiqueta_label = 'Actividades Economicas';
+        $adm_seccion_pertenece_descripcion = __FUNCTION__;
+        $adm_namespace_name = 'gamboamartin/ks_ops';
+        $adm_namespace_descripcion = 'gamboa.martin/ks_ops';
+
+        $adm_acciones_basicas = (new _adm())->acl_base(adm_menu_descripcion: $adm_menu_descripcion,
+            adm_namespace_descripcion:  $adm_namespace_descripcion,adm_namespace_name:  $adm_namespace_name,
+            adm_seccion_descripcion: __FUNCTION__,
+            adm_seccion_pertenece_descripcion:  $adm_seccion_pertenece_descripcion,
+            adm_sistema_descripcion:  $adm_sistema_descripcion, etiqueta_label: $etiqueta_label,link:  $link);
+        if(errores::$error){
+            return (new errores())->error(mensaje: 'Error al obtener acciones basicas', data:  $adm_acciones_basicas);
+        }
+
+
+        return $adm_acciones_basicas;
+
+
+
+    }
+
     private function com_tipo_cliente(PDO $link): array|stdClass
     {
 
@@ -139,6 +165,12 @@ class instalacion
     {
 
         $result = new stdClass();
+
+        $cat_sat_actividad_economica = $this->cat_sat_actividad_economica(link: $link);
+        if(errores::$error){
+            return (new errores())->error(mensaje: 'Error al ajustar cat_sat_actividad_economica', data:  $cat_sat_actividad_economica);
+        }
+        $result->cat_sat_actividad_economica = $cat_sat_actividad_economica;
 
         $com_tipo_cliente = $this->com_tipo_cliente(link: $link);
         if(errores::$error){
