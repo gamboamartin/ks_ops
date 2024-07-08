@@ -11,10 +11,20 @@ namespace gamboamartin\ks_ops\controllers;
 
 use gamboamartin\direccion_postal\controllers\_init_dps;
 use gamboamartin\errores\errores;
+use gamboamartin\ks_ops\models\com_cliente;
+use gamboamartin\template_1\html;
+use PDO;
 use stdClass;
 
 final class controlador_com_cliente extends \gamboamartin\comercial\controllers\controlador_com_cliente
 {
+
+    public function __construct(PDO $link,stdClass $paths_conf,html $html)
+    {
+        parent::__construct(link: $link, html: $html, paths_conf: $paths_conf);
+        $this->modelo = new com_cliente(link: $this->link);
+
+    }
     public function alta(bool $header, bool $ws = false): array|string
     {
         $urls_js = (new _init_dps())->init_js(controler: $this);
