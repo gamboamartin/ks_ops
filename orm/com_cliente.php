@@ -1,5 +1,7 @@
 <?php
 namespace gamboamartin\ks_ops\models;
+use gamboamartin\cat_sat\models\cat_sat_tipo_persona;
+use gamboamartin\direccion_postal\models\dp_municipio;
 use gamboamartin\errores\errores;
 use stdClass;
 
@@ -7,6 +9,11 @@ class com_cliente extends \gamboamartin\comercial\models\com_cliente {
 
     final public function alta_bd(array $keys_integra_ds = array('codigo', 'descripcion')): array|stdClass
     {
+        $predefinidos = $this->valores_predeterminados();
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener valores predeterminados',data:  $predefinidos);
+        }
+
         $registro_original = $this->registro;
         $alta_bd = parent::alta_bd(keys_integra_ds: $keys_integra_ds);
         if(errores::$error){
@@ -27,8 +34,26 @@ class com_cliente extends \gamboamartin\comercial\models\com_cliente {
         }
 
         return $alta_bd;
-
     }
+
+    public function valores_predeterminados() : array
+    {
+        $this->registro['numero_exterior'] = 1;
+
+        $this->registro['dp_municipio_id'] = (new dp_municipio(link: $this->link))->id_predeterminado();
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener id municipio predeterminado', data: $this->registro);
+        }
+
+        $this->registro['cat_sat_tipo_persona_id'] = (new cat_sat_tipo_persona(link: $this->link))->id_predeterminado();
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener id tipo persona predeterminado', data: $this->registro);
+        }
+
+        return $this->registro;
+    }
+
+
 
     final public function elimina_bd(int $id): array|stdClass
     {
