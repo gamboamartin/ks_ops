@@ -100,9 +100,6 @@ if(errores::$error){
     exit;
 }
 
-
-
-
 $ks_ops = new instalacion();
 
 $instala = $ks_ops->instala(link: $link);
@@ -114,8 +111,6 @@ if(errores::$error){
     print_r($error);
     exit;
 }
-
-
 
 if($link->inTransaction()) {
     $link->commit();

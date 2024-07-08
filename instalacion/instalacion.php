@@ -109,10 +109,43 @@ class instalacion
 
     }
 
+    private function com_tipo_cliente(PDO $link): array|stdClass
+    {
+
+        $adm_menu_descripcion = 'Comercial';
+        $adm_sistema_descripcion = 'ks_ops';
+        $etiqueta_label = 'Tipo de Clientes';
+        $adm_seccion_pertenece_descripcion = __FUNCTION__;
+        $adm_namespace_name = 'gamboamartin/ks_ops';
+        $adm_namespace_descripcion = 'gamboa.martin/ks_ops';
+
+        $adm_acciones_basicas = (new _adm())->acl_base(adm_menu_descripcion: $adm_menu_descripcion,
+            adm_namespace_descripcion:  $adm_namespace_descripcion,adm_namespace_name:  $adm_namespace_name,
+            adm_seccion_descripcion: __FUNCTION__,
+            adm_seccion_pertenece_descripcion:  $adm_seccion_pertenece_descripcion,
+            adm_sistema_descripcion:  $adm_sistema_descripcion, etiqueta_label: $etiqueta_label,link:  $link);
+        if(errores::$error){
+            return (new errores())->error(mensaje: 'Error al obtener acciones basicas', data:  $adm_acciones_basicas);
+        }
+
+
+        return $adm_acciones_basicas;
+
+
+
+    }
+
     final public function instala(PDO $link): array|stdClass
     {
 
         $result = new stdClass();
+
+        $com_tipo_cliente = $this->com_tipo_cliente(link: $link);
+        if(errores::$error){
+            return (new errores())->error(mensaje: 'Error al ajustar com_tipo_cliente', data:  $com_tipo_cliente);
+        }
+        $result->com_tipo_cliente = $com_tipo_cliente;
+
 
         $adm_seccion = $this->adm_seccion(link: $link);
         if(errores::$error){
