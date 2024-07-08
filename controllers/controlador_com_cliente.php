@@ -24,8 +24,9 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
     {
         parent::__construct(link: $link, html: $html, paths_conf: $paths_conf);
         $this->modelo = new com_cliente(link: $this->link);
-    }
 
+        $this->childrens_data = array();
+    }
 
     public function alta(bool $header, bool $ws = false): array|string
     {
@@ -75,6 +76,34 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         }
 
         return $inputs;
+    }
+
+    public function modifica_cliente(bool $header, bool $ws = false, array $not_actions = array()): array|stdClass
+    {
+        $urls_js = (new _init_dps())->init_js(controler: $this);
+
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al generar url js', data: $urls_js, header: $header, ws: $ws);
+        }
+
+        $r_modifica = $this->init_modifica();
+        if (errores::$error) {
+            return $this->retorno_error(
+                mensaje: 'Error al generar salida de template', data: $r_modifica, header: $header, ws: $ws);
+        }
+
+        $keys_selects = $this->key_select(cols: 12, con_registros: true, filtro: array(), key: "com_tipo_cliente_id",
+            keys_selects: array(), id_selected: $this->registro['com_tipo_cliente_id'], label: "Tipo de Cliente");
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al obtener keys_selects', data: $keys_selects);
+        }
+
+        $base = $this->base_upd(keys_selects: $keys_selects, params: array(), params_ajustados: array());
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al integrar base', data: $base, header: $header, ws: $ws);
+        }
+
+        return $r_modifica;
     }
 
 
