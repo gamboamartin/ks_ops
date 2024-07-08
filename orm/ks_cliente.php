@@ -40,6 +40,18 @@ class ks_cliente extends modelo {
 
     }
 
+    final public function id_by_cliente(int $com_cliente_id)
+    {
+        $filtro['com_cliente.id'] = $com_cliente_id;
+        $ks_cliente = $this->filtro_and(filtro: $filtro);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener ks_cliente',data:  $ks_cliente);
+        }
+
+        return (int)$ks_cliente->registros[0]['ks_cliente_id'];
+
+    }
+
     final public function modifica_bd(array $registro, int $id, bool $reactiva = false): array|stdClass
     {
 
