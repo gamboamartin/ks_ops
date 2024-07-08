@@ -3,6 +3,7 @@ namespace gamboamartin\ks_ops\instalacion;
 
 
 use gamboamartin\administrador\instalacion\_adm;
+use gamboamartin\administrador\models\_instalacion;
 use gamboamartin\errores\errores;
 use PDO;
 use stdClass;
@@ -10,6 +11,33 @@ use stdClass;
 class instalacion
 {
 
+    private function _add_ks_cliente(PDO $link): array|stdClass
+    {
+        $out = new stdClass();
+        $init = (new _instalacion(link: $link));
+
+        $create = $init->create_table_new(table: 'ks_cliente');
+        if(errores::$error){
+            return (new errores())->error(mensaje: 'Error al agregar tabla', data:  $create);
+        }
+        $out->create = $create;
+
+        $foraneas = array();
+        $foraneas['com_cliente_id'] = new stdClass();
+        $foraneas['cat_sat_actividad_economica_id'] = new stdClass();
+
+        $result = $init->foraneas(foraneas: $foraneas,table:  'ks_cliente');
+
+        if(errores::$error){
+            return (new errores())->error(mensaje: 'Error al ajustar foranea', data:  $result);
+        }
+
+        $out->foraneas = $result;
+
+
+
+        return $out;
+    }
     private function adm_accion(PDO $link): array|stdClass
     {
 
@@ -161,6 +189,39 @@ class instalacion
 
     }
 
+    private function ks_cliente(PDO $link): array|stdClass
+    {
+        $out = new stdClass();
+
+        $create = $this->_add_ks_cliente(link: $link);
+        if(errores::$error){
+            return (new errores())->error(mensaje: 'Error al agregar tabla', data:  $create);
+        }
+
+        $out->campos = $create;
+
+        $adm_menu_descripcion = 'Clientes';
+        $adm_sistema_descripcion = 'ks_ops';
+        $etiqueta_label = 'Cliente Extendido KS';
+        $adm_seccion_pertenece_descripcion = 'ks_cliente';
+        $adm_namespace_name = 'gamboamartin/ks_ops';
+        $adm_namespace_descripcion = 'gamboa.martin/ks_ops';
+
+        $acl = (new _adm())->integra_acl(adm_menu_descripcion: $adm_menu_descripcion,
+            adm_namespace_name: $adm_namespace_name, adm_namespace_descripcion: $adm_namespace_descripcion,
+            adm_seccion_descripcion: __FUNCTION__,
+            adm_seccion_pertenece_descripcion: $adm_seccion_pertenece_descripcion,
+            adm_sistema_descripcion: $adm_sistema_descripcion,
+            etiqueta_label: $etiqueta_label, link: $link);
+        if(errores::$error){
+            return (new errores())->error(mensaje: 'Error al obtener acl', data:  $acl);
+        }
+
+
+        return $out;
+
+    }
+
     final public function instala(PDO $link): array|stdClass
     {
 
@@ -231,9 +292,15 @@ class instalacion
 
         $pr_etapa_proceso = $this->pr_etapa_proceso(link: $link);
         if(errores::$error){
-            return (new errores())->error(mensaje: 'Error al ajustar not_emisor', data:  $pr_etapa_proceso);
+            return (new errores())->error(mensaje: 'Error al ajustar pr_etapa_proceso', data:  $pr_etapa_proceso);
         }
         $result->pr_etapa_proceso = $pr_etapa_proceso;
+
+        $ks_cliente = $this->ks_cliente(link: $link);
+        if(errores::$error){
+            return (new errores())->error(mensaje: 'Error al ajustar ks_cliente', data:  $ks_cliente);
+        }
+        $result->ks_cliente = $ks_cliente;
 
         return $result;
 
