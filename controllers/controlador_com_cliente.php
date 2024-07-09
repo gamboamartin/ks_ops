@@ -11,6 +11,7 @@ namespace gamboamartin\ks_ops\controllers;
 
 use gamboamartin\direccion_postal\controllers\_init_dps;
 use gamboamartin\errores\errores;
+use base\controller\init;
 use gamboamartin\ks_ops\models\com_cliente;
 use gamboamartin\template_1\html;
 use PDO;
@@ -46,6 +47,24 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         }
 
         return $r_alta;
+    }
+
+    protected function init_datatable(): stdClass
+    {
+        $columns["com_cliente_id"]["titulo"] = "Id";
+        $columns["com_cliente_codigo"]["titulo"] = "Código";
+        $columns["com_cliente_razon_social"]["titulo"] = "Razón Social";
+        $columns["com_cliente_rfc"]["titulo"] = "RFC";
+        $columns["com_cliente_telefono"]["titulo"] = "Teléfono ";
+
+        $filtro = array("com_cliente.id", "com_cliente.codigo", "com_cliente.razon_social", "com_cliente.rfc",
+            "com_cliente.telefono");
+
+        $datatables = new stdClass();
+        $datatables->columns = $columns;
+        $datatables->filtro = $filtro;
+
+        return $datatables;
     }
 
     protected function data_form(): array|stdClass
@@ -97,6 +116,63 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al obtener keys_selects', data: $keys_selects);
         }
+
+        $keys_selects = $this->key_select(cols: 12, con_registros: true, filtro: array(), key: "cat_sat_tipo_persona_id",
+            keys_selects: $keys_selects, id_selected: $this->registro['cat_sat_tipo_persona_id'], label: "Tipo de Persona");
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al obtener keys_selects', data: $keys_selects);
+        }
+
+        $keys_selects = $this->key_select(cols: 12, con_registros: true, filtro: array(), key: "cat_sat_regimen_fiscal_id",
+            keys_selects: $keys_selects, id_selected: $this->registro['cat_sat_regimen_fiscal_id'], label: "Régimen Fiscal");
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al obtener keys_selects', data: $keys_selects);
+        }
+
+        $keys_selects = $this->key_select(cols: 6, con_registros: true, filtro: array(), key: "dp_pais_id",
+            keys_selects: $keys_selects, id_selected: $this->registro['dp_pais_id'], label: "País");
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al obtener keys_selects', data: $keys_selects);
+        }
+        $keys_selects['dp_pais_id']->key_descripcion_select = 'dp_pais_descripcion';
+
+        $keys_selects = $this->key_select(cols: 6, con_registros: true, filtro: array('dp_pais.id' => $this->registro['dp_pais_id']),
+            key: "dp_estado_id", keys_selects: $keys_selects, id_selected: $this->registro['dp_estado_id'], label: "Estado");
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al obtener keys_selects', data: $keys_selects);
+        }
+        $keys_selects['dp_estado_id']->key_descripcion_select = 'dp_estado_descripcion';
+
+        $keys_selects = $this->key_select(cols: 6, con_registros: true, filtro: array('dp_estado.id' => $this->registro['dp_estado_id']),
+            key: "dp_municipio_id", keys_selects: $keys_selects, id_selected: $this->registro['dp_municipio_id'], label: "Municipio");
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al obtener keys_selects', data: $keys_selects);
+        }
+        $keys_selects['dp_municipio_id']->key_descripcion_select = 'dp_municipio_descripcion';
+
+        $keys_selects['com_tipo_cliente_id']->disabled = true;
+
+        $keys_selects = (new init())->key_select_txt(cols: 4, key: 'codigo',
+            keys_selects: $keys_selects, place_holder: 'Cod');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+        $keys_selects['codigo']->disabled = true;
+
+        $keys_selects = (new init())->key_select_txt(cols: 8, key: 'razon_social',
+            keys_selects: $keys_selects, place_holder: 'Razón Social');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+        $keys_selects['razon_social']->disabled = true;
+
+        $keys_selects = (new init())->key_select_txt(cols: 6, key: 'rfc',
+            keys_selects: $keys_selects, place_holder: 'RFC');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+        $keys_selects['rfc']->disabled = true;
+
 
         $base = $this->base_upd(keys_selects: $keys_selects, params: array(), params_ajustados: array());
         if (errores::$error) {

@@ -19,6 +19,17 @@
                         <?php echo $controlador->inputs->razon_social; ?>
                         <?php echo $controlador->inputs->rfc; ?>
                         <?php echo $controlador->inputs->telefono; ?>
+                        <?php echo $controlador->inputs->cat_sat_tipo_persona_id; ?>
+                        <?php echo $controlador->inputs->cat_sat_regimen_fiscal_id; ?>
+                        <?php echo $controlador->inputs->dp_pais_id; ?>
+                        <?php echo $controlador->inputs->dp_estado_id; ?>
+                        <?php echo $controlador->inputs->dp_municipio_id; ?>
+                        <?php echo $controlador->inputs->cp; ?>
+                        <?php echo $controlador->inputs->colonia; ?>
+                        <?php echo $controlador->inputs->calle; ?>
+                        <?php echo $controlador->inputs->numero_exterior; ?>
+                        <?php echo $controlador->inputs->numero_interior; ?>
+
                         <div class="control-group btn-alta">
                             <div class="controls">
                                 <button class="btn btn-success" role="submit">Modifica</button><br>
