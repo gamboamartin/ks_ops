@@ -14,6 +14,7 @@ use gamboamartin\errores\errores;
 use base\controller\init;
 use gamboamartin\ks_ops\models\com_cliente;
 use gamboamartin\template_1\html;
+use html\com_cliente_html;
 use PDO;
 use stdClass;
 
@@ -88,6 +89,14 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
 
         $data_extra_cat_sat_forma_pago[] = 'cat_sat_forma_pago_codigo';
         $keys_selects['cat_sat_forma_pago_id']->extra_params_keys = $data_extra_cat_sat_forma_pago;
+
+        $com_cliente_rfc = (new com_cliente_html(html: $this->html_base))->input_rfc(cols: 6, row_upd: $this->row_upd,
+            value_vacio: false);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar input', data: $com_cliente_rfc);
+        }
+
+        $this->inputs->com_cliente_rfc = $com_cliente_rfc;
 
         $inputs = $this->inputs(keys_selects: $keys_selects);
         if (errores::$error) {
