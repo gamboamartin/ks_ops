@@ -74,7 +74,7 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al inicializar selects', data: $keys_selects);
         }
-        $keys_selects['com_tipo_cliente_id']->required = false;
+
         $keys_selects['dp_pais_id']->required = false;
         $keys_selects['dp_estado_id']->required = false;
         $keys_selects['dp_municipio_id']->required = false;
