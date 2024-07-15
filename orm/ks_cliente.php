@@ -79,6 +79,7 @@ class ks_cliente extends modelo {
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al modificar cliente',data:  $r_modifica_bd);
         }
+
         return $r_modifica_bd;
     }
 

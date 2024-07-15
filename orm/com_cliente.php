@@ -17,7 +17,7 @@ class com_cliente extends \gamboamartin\comercial\models\com_cliente {
 
         $this->extension_estructura['cat_sat_actividad_economica']['key'] = 'id';
         $this->extension_estructura['cat_sat_actividad_economica']['enlace'] = 'ks_cliente';
-        $this->extension_estructura['cat_sat_actividad_economica']['key_enlace'] = 'id';
+        $this->extension_estructura['cat_sat_actividad_economica']['key_enlace'] = 'cat_sat_actividad_economica_id';
     }
 
     final public function alta_bd(array $keys_integra_ds = array('codigo', 'descripcion')): array|stdClass
@@ -100,6 +100,7 @@ class com_cliente extends \gamboamartin\comercial\models\com_cliente {
                                       bool $valida_conf_tipo_persona = true,
                                       bool $valida_metodo_pago = true): array|stdClass
     {
+
         $registro_original = $registro;
         $r_modifica = parent::modifica_bd(registro: $registro, id: $id, reactiva: $reactiva,
             keys_integra_ds: $keys_integra_ds, valida_conf_tipo_persona: $valida_conf_tipo_persona,
@@ -135,6 +136,7 @@ class com_cliente extends \gamboamartin\comercial\models\com_cliente {
                 if(errores::$error){
                     return $this->error->error(mensaje: 'Error al actualizar ks_cliente',data:  $ks_cliente_update);
                 }
+
             }
         }
 

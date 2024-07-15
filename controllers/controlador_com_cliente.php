@@ -121,6 +121,35 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         return $inputs;
     }
 
+    final public function modifica(bool $header, bool $ws = false): array|stdClass
+    {
+        $r_modifica_bd = parent::modifica(header: $header, ws: $ws);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al obtener template', data: $r_modifica_bd);
+        }
+
+        $com_cliente = (new com_cliente(link: $this->link))->registro(registro_id: $this->registro_id, retorno_obj: true);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al obtener com_cliente',
+                data: $com_cliente);
+        }
+        
+
+        $cat_sat_actividad_economica_id = (
+        new cat_sat_actividad_economica_html(html: $this->html_base))->select_cat_sat_actividad_economica_id(
+                cols: 12, con_registros: true,id_selected: $com_cliente->cat_sat_actividad_economica_id,
+                link: $this->link,label: 'Giro/Actividad');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al obtener cat_sat_actividad_economica_id',
+                data: $cat_sat_actividad_economica_id);
+        }
+
+        $this->inputs->cat_sat_actividad_economica_id = $cat_sat_actividad_economica_id;
+
+        return $r_modifica_bd;
+
+    }
+
     public function modifica_cliente(bool $header, bool $ws = false, array $not_actions = array()): array|stdClass
     {
         $urls_js = (new _init_dps())->init_js(controler: $this);
