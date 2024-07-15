@@ -9,7 +9,6 @@
 
 namespace gamboamartin\ks_ops\controllers;
 
-use gamboamartin\cat_sat\models\cat_sat_actividad_economica;
 use gamboamartin\direccion_postal\controllers\_init_dps;
 use gamboamartin\errores\errores;
 use base\controller\init;
@@ -58,10 +57,12 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         $columns["com_cliente_codigo"]["titulo"] = "Código";
         $columns["com_cliente_razon_social"]["titulo"] = "Razón Social";
         $columns["com_cliente_rfc"]["titulo"] = "RFC";
+        $columns["com_tipo_cliente_descripcion"]["titulo"] = "Tipo";
+        $columns["cat_sat_actividad_economica_descripcion"]["titulo"] = "Giro/Act";
         $columns["com_cliente_telefono"]["titulo"] = "Teléfono ";
 
         $filtro = array("com_cliente.id", "com_cliente.codigo", "com_cliente.razon_social", "com_cliente.rfc",
-            "com_cliente.telefono");
+            "com_cliente.telefono",'com_tipo_cliente.descripcion','cat_sat_actividad_economica.descripcion');
 
         $datatables = new stdClass();
         $datatables->columns = $columns;

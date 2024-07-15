@@ -3,9 +3,22 @@ namespace gamboamartin\ks_ops\models;
 use gamboamartin\cat_sat\models\cat_sat_tipo_persona;
 use gamboamartin\direccion_postal\models\dp_municipio;
 use gamboamartin\errores\errores;
+use PDO;
 use stdClass;
 
 class com_cliente extends \gamboamartin\comercial\models\com_cliente {
+
+    public function __construct(PDO $link)
+    {
+        parent::__construct(link: $link);
+        $this->extension_estructura['ks_cliente']['key'] = 'com_cliente_id';
+        $this->extension_estructura['ks_cliente']['enlace'] = 'com_cliente';
+        $this->extension_estructura['ks_cliente']['key_enlace'] = 'id';
+
+        $this->extension_estructura['cat_sat_actividad_economica']['key'] = 'id';
+        $this->extension_estructura['cat_sat_actividad_economica']['enlace'] = 'ks_cliente';
+        $this->extension_estructura['cat_sat_actividad_economica']['key_enlace'] = 'id';
+    }
 
     final public function alta_bd(array $keys_integra_ds = array('codigo', 'descripcion')): array|stdClass
     {
