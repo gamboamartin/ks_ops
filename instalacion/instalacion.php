@@ -163,6 +163,29 @@ class instalacion
 
     }
 
+    private function com_cliente(PDO $link): array|stdClass
+    {
+
+        $adm_menu_descripcion = 'Clientes';
+        $adm_sistema_descripcion = 'ks_ops';
+        $etiqueta_label = 'Clientes';
+        $adm_seccion_pertenece_descripcion = __FUNCTION__;
+        $adm_namespace_name = 'gamboamartin/ks_ops';
+        $adm_namespace_descripcion = 'gamboa.martin/ks_ops';
+
+        $adm_acciones_basicas = (new _adm())->acl_base(adm_menu_descripcion: $adm_menu_descripcion,
+            adm_namespace_descripcion:  $adm_namespace_descripcion,adm_namespace_name:  $adm_namespace_name,
+            adm_seccion_descripcion: __FUNCTION__,
+            adm_seccion_pertenece_descripcion:  $adm_seccion_pertenece_descripcion,
+            adm_sistema_descripcion:  $adm_sistema_descripcion, etiqueta_label: $etiqueta_label,link:  $link);
+        if(errores::$error){
+            return (new errores())->error(mensaje: 'Error al obtener acciones basicas', data:  $adm_acciones_basicas);
+        }
+
+        return $adm_acciones_basicas;
+
+    }
+
     private function com_tipo_cliente(PDO $link): array|stdClass
     {
 
@@ -292,6 +315,12 @@ class instalacion
             return (new errores())->error(mensaje: 'Error al ajustar pr_etapa_proceso', data:  $pr_etapa_proceso);
         }
         $result->pr_etapa_proceso = $pr_etapa_proceso;
+
+        $com_cliente = $this->com_cliente(link: $link);
+        if(errores::$error){
+            return (new errores())->error(mensaje: 'Error al ajustar com_cliente', data:  $com_cliente);
+        }
+        $result->com_cliente = $com_cliente;
 
         $ks_cliente = $this->ks_cliente(link: $link);
         if(errores::$error){
