@@ -9,11 +9,13 @@
 
 namespace gamboamartin\ks_ops\controllers;
 
+use gamboamartin\cat_sat\models\cat_sat_actividad_economica;
 use gamboamartin\direccion_postal\controllers\_init_dps;
 use gamboamartin\errores\errores;
 use base\controller\init;
 use gamboamartin\ks_ops\models\com_cliente;
 use gamboamartin\template_1\html;
+use html\cat_sat_actividad_economica_html;
 use html\com_cliente_html;
 use PDO;
 use stdClass;
@@ -75,6 +77,7 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
             return $this->errores->error(mensaje: 'Error al inicializar selects', data: $keys_selects);
         }
 
+
         $keys_selects['dp_pais_id']->required = false;
         $keys_selects['dp_estado_id']->required = false;
         $keys_selects['dp_municipio_id']->required = false;
@@ -102,6 +105,17 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al obtener inputs', data: $inputs);
         }
+
+        $cat_sat_actividad_economica_id = (
+            new cat_sat_actividad_economica_html(html: $this->html_base))->select_cat_sat_actividad_economica_id(
+                cols: 12, con_registros: true,id_selected: -1,link: $this->link,label: 'Giro/Actividad');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al obtener cat_sat_actividad_economica_id',
+                data: $cat_sat_actividad_economica_id);
+        }
+
+        $inputs->cat_sat_actividad_economica_id = $cat_sat_actividad_economica_id;
+
 
         return $inputs;
     }

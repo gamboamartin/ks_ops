@@ -10,7 +10,7 @@ class ks_cliente extends modelo {
         $tabla = 'ks_cliente';
         $columnas = array($tabla=>false, 'com_cliente'=>$tabla, 'cat_sat_actividad_economica'=>$tabla);
 
-        $campos_obligatorios = array('com_cliente_id','cp','cat_sat_actividad_economica_id');
+        $campos_obligatorios = array('com_cliente_id','cat_sat_actividad_economica_id');
 
         parent::__construct(link: $link, tabla: $tabla, campos_obligatorios: $campos_obligatorios,
             columnas: $columnas, childrens: $childrens);
@@ -31,6 +31,15 @@ class ks_cliente extends modelo {
         if($existe_cliente){
             return $this->error->error(mensaje: 'Error el cliente ya existe en ks',data:  $filtro);
         }
+
+        $cliente = (new com_cliente(link: $this->link))->registro(registro_id: $this->registro['com_cliente_id'],
+            columnas_en_bruto: true,retorno_obj: true);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener cliente',data:  $existe_cliente);
+        }
+
+        $this->registro['codigo'] = $cliente->codigo;
+        $this->registro['descripcion'] = $cliente->descripcion;
 
         $r_alta_bd = parent::alta_bd();
         if(errores::$error){
