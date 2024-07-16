@@ -10,4 +10,7 @@ namespace gamboamartin\ks_ops\controllers;
 
 final class controlador_cat_sat_actividad_economica
     extends \gamboamartin\cat_sat\controllers\controlador_cat_sat_actividad_economica  {
+
+
+
 }

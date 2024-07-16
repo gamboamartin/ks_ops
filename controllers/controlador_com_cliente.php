@@ -133,7 +133,7 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
             return $this->errores->error(mensaje: 'Error al obtener com_cliente',
                 data: $com_cliente);
         }
-        
+
 
         $cat_sat_actividad_economica_id = (
         new cat_sat_actividad_economica_html(html: $this->html_base))->select_cat_sat_actividad_economica_id(
