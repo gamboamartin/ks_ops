@@ -24,10 +24,3 @@
 <?php echo $controlador->inputs->cat_sat_tipo_de_comprobante_id; ?>
 <?php echo $controlador->inputs->cat_sat_moneda_id; ?>
 <?php include (new views())->ruta_templates . 'botons/submit/modifica_bd.php'; ?>
-
-
-
-
-
-
-

@@ -46,6 +46,12 @@
 
     });
 
+    $("#form_com_cliente_alta").submit(function() {
+        if(dp_municipio_id_sl.val() === '-1'){
+            alert('Seleccione un municipio');
+            return false;
+        }
+    });
 
 
 

@@ -8,9 +8,3 @@
 <?php echo $controlador->inputs->telefono; ?>
 
 <?php include (new views())->ruta_templates.'botons/submit/alta_bd.php';?>
-
-
-
-
-
-
