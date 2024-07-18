@@ -57,6 +57,45 @@ class controlador_ks_comision_general extends _ctl_base {
 
     }
 
+    public function alta(bool $header, bool $ws = false): array|string
+    {
+        $r_alta = $this->init_alta();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar alta', data: $r_alta, header: $header, ws: $ws);
+        }
+
+        $keys_selects = $this->init_selects_inputs();
+        if (errores::$error) {return $this->errores->error(mensaje: 'Error al inicializar selects', data: $keys_selects);
+        }
+
+        $this->row_upd->fecha_inicio = date('Y-m-d');
+        $this->row_upd->fecha_fin = date('Y-m-d');
+
+        $inputs = $this->inputs(keys_selects: $keys_selects);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al obtener inputs', data: $inputs);
+        }
+
+        return $r_alta;
+    }
+
+    protected function campos_view(): array
+    {
+        $keys = new stdClass();
+        $keys->inputs = array('porcentaje');
+        $keys->fechas = array('fecha_inicio', 'fecha_fin');
+        $keys->selects = array();
+
+        $init_data = array();
+        $init_data['com_cliente'] = "gamboamartin\\comercial";
+        $campos_view = $this->campos_view_base(init_data: $init_data, keys: $keys);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al inicializar campo view', data: $campos_view);
+        }
+
+        return $campos_view;
+    }
+
     private function init_configuraciones(): controler
     {
         $this->titulo_lista = 'Registro de Comisiones Generales';
@@ -69,6 +108,28 @@ class controlador_ks_comision_general extends _ctl_base {
         return $this;
     }
 
+    private function init_selects(array $keys_selects, string $key, string $label, int|null $id_selected = -1, int $cols = 6,
+                                  bool  $con_registros = true, array $filtro = array(), array $columns_ds =  array()): array
+    {
+        $keys_selects = $this->key_select(cols: $cols, con_registros: $con_registros, filtro: $filtro, key: $key,
+            keys_selects: $keys_selects, id_selected: $id_selected, label: $label, columns_ds: $columns_ds);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        return $keys_selects;
+    }
+
+    public function init_selects_inputs(): array{
+
+        $keys_selects = $this->init_selects(keys_selects: array(), key: "com_cliente_id", label: "Cliente",
+            cols: 8,columns_ds: array('com_cliente_razon_social'));
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error al integrar selector',data:  $keys_selects);
+        }
+
+        return $keys_selects;
+    }
 
     final public function init_datatable(): stdClass
     {
@@ -85,5 +146,52 @@ class controlador_ks_comision_general extends _ctl_base {
         $datatables->filtro[] = 'com_cliente.razon_social';
 
         return $datatables;
+    }
+
+    protected function key_selects_txt(array $keys_selects): array
+    {
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 4, key: 'porcentaje',
+            keys_selects: $keys_selects, place_holder: 'Porcentaje');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'fecha_inicio',
+            keys_selects: $keys_selects, place_holder: 'Fecha Inicio');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'fecha_fin',
+            keys_selects: $keys_selects, place_holder: 'Fecha Fin');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        return $keys_selects;
+    }
+
+    public function modifica(bool $header, bool $ws = false): array|stdClass
+    {
+        $r_modifica = $this->init_modifica();
+        if (errores::$error) {
+            return $this->retorno_error(
+                mensaje: 'Error al generar salida de template', data: $r_modifica, header: $header, ws: $ws);
+        }
+
+        $keys_selects = $this->init_selects_inputs();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
+                ws: $ws);
+        }
+
+        $keys_selects['com_cliente_id']->id_selected = $this->registro['com_cliente_id'];
+
+        $base = $this->base_upd(keys_selects: $keys_selects, params: array(), params_ajustados: array());
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al integrar base', data: $base, header: $header, ws: $ws);
+        }
+
+        return $r_modifica;
     }
 }
