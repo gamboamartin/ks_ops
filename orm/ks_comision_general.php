@@ -45,6 +45,14 @@ class ks_comision_general extends _modelo_parent {
 
         $registros['descripcion'] = $registros['codigo'] . '-' . $registros['com_cliente_id'];
 
+        if (!array_key_exists('fecha_inicio', $registros)) {
+            $registros['fecha_inicio'] = '1900-01-01';
+        }
+
+        if (!array_key_exists('fecha_inicio', $registros)) {
+            $registros['fecha_inicio'] = '2200-01-0';
+        }
+
         return $registros;
     }
 

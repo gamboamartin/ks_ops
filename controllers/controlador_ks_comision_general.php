@@ -138,6 +138,9 @@ class controlador_ks_comision_general extends _ctl_base {
         $datatables->columns['ks_comision_general_id']['titulo'] = 'Id';
         $datatables->columns['com_cliente_rfc']['titulo'] = 'RFC';
         $datatables->columns['com_cliente_razon_social']['titulo'] = 'Cliente';
+        $datatables->columns['ks_comision_general_porcentaje']['titulo'] = 'Porcentaje';
+        $datatables->columns['ks_comision_general_fecha_inicio']['titulo'] = 'Fecha Inicio';
+        $datatables->columns['ks_comision_general_fecha_fin']['titulo'] = 'Fecha Fin';
 
         $datatables->filtro = array();
         $datatables->filtro[] = 'ks_cliente.id';
