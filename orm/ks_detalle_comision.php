@@ -102,6 +102,13 @@ class ks_detalle_comision extends _modelo_parent
             return $this->error->error(mensaje: 'Error al obtener comisión general', data: $registros);
         }
 
+        $sumatoria = $this->sumatoria_porcentajes($registros['ks_comision_general_id']);
+        $sumatoria = $sumatoria + $registros['porcentaje'];
+        if ($sumatoria > $ks_comision_general['ks_comision_general_porcentaje']) {
+            $mensaje = "La sumatoria de porcentajes $sumatoria% no puede ser mayor a {$ks_comision_general['ks_comision_general_porcentaje']}%";
+            return $this->error->error(mensaje: $mensaje, data: $registros);
+        }
+
         if (isset($registros['fecha_inicio'])) {
             $fecha_inicio_general = strtotime($ks_comision_general['ks_comision_general_fecha_inicio']);
             $fecha_inicio_detalle = strtotime($registros['fecha_inicio']);
@@ -138,4 +145,14 @@ class ks_detalle_comision extends _modelo_parent
         return $registros;
     }
 
+    public function sumatoria_porcentajes(int $ks_comision_general_id): float|array
+    {
+        $suma = $this->suma(campos: array("suma" => "ks_detalle_comision.porcentaje"),
+            filtro: array("ks_comision_general_id" => $ks_comision_general_id));
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener sumatoria de porcentajes', data: $suma);
+        }
+
+        return $suma['suma'];
+    }
 }
