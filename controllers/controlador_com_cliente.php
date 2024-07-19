@@ -51,6 +51,41 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         return $r_alta;
     }
 
+    protected function campos_view(): array
+    {
+        $keys = new stdClass();
+        $keys->inputs = array('codigo', 'razon_social', 'rfc','numero_exterior', 'numero_interior',
+            'cp', 'colonia', 'calle', 'nombre', 'ap', 'am', 'porcentaje');
+        $keys->telefonos = array('telefono');
+        $keys->emails = array('correo');
+        $keys->fechas = array('fecha_inicio', 'fecha_fin');
+        $keys->selects = array();
+
+        $init_data = array();
+        $init_data['dp_pais'] = "gamboamartin\\direccion_postal";
+        $init_data['dp_estado'] = "gamboamartin\\direccion_postal";
+        $init_data['dp_municipio'] = "gamboamartin\\direccion_postal";
+        $init_data['dp_cp'] = "gamboamartin\\direccion_postal";
+        $init_data['dp_colonia_postal'] = "gamboamartin\\direccion_postal";
+        $init_data['dp_calle_pertenece'] = "gamboamartin\\direccion_postal";
+        $init_data['cat_sat_regimen_fiscal'] = "gamboamartin\\cat_sat";
+        $init_data['cat_sat_moneda'] = "gamboamartin\\cat_sat";
+        $init_data['cat_sat_forma_pago'] = "gamboamartin\\cat_sat";
+        $init_data['cat_sat_metodo_pago'] = "gamboamartin\\cat_sat";
+        $init_data['cat_sat_uso_cfdi'] = "gamboamartin\\cat_sat";
+        $init_data['cat_sat_tipo_de_comprobante'] = "gamboamartin\\cat_sat";
+        $init_data['com_tipo_cliente'] = "gamboamartin\\comercial";
+        $init_data['cat_sat_tipo_persona'] = "gamboamartin\\cat_sat";
+        $init_data['com_agente'] = "gamboamartin\\comercial";
+        $init_data['com_tipo_contacto'] = "gamboamartin\\comercial";
+        $campos_view = $this->campos_view_base(init_data: $init_data, keys: $keys);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al inicializar campo view', data: $campos_view);
+        }
+
+        return $campos_view;
+    }
+
     protected function init_datatable(): stdClass
     {
         $columns["com_cliente_id"]["titulo"] = "Id";
@@ -77,7 +112,6 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al inicializar selects', data: $keys_selects);
         }
-
 
         $keys_selects['dp_pais_id']->required = false;
         $keys_selects['dp_estado_id']->required = false;
@@ -120,6 +154,68 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
 
         return $inputs;
     }
+
+    public function comisiones_generales(bool $header, bool $ws = false, array $not_actions = array()): array|string
+    {
+        $this->accion_titulo = 'Comisiones Generales';
+
+        $r_modifica = $this->init_modifica();
+        if (errores::$error) {
+            return $this->retorno_error(
+                mensaje: 'Error al generar salida de template', data: $r_modifica, header: $header, ws: $ws);
+        }
+
+        $keys_selects = $this->init_selects_inputs();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
+                ws: $ws);
+        }
+
+        $keys_selects = (new init())->key_select_txt(cols: 4, key: 'porcentaje', keys_selects: $keys_selects,
+            place_holder: 'Porcentaje');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new init())->key_select_txt(cols: 4, key: 'fecha_inicio', keys_selects: $keys_selects,
+            place_holder: 'Fecha Inicio');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new init())->key_select_txt(cols: 4, key: 'fecha_fin', keys_selects: $keys_selects,
+            place_holder: 'Fecha Fin');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $this->row_upd->fecha_inicio = date('Y-m-d');
+        $this->row_upd->fecha_fin = date('Y-m-d');
+
+        $base = $this->base_upd(keys_selects: $keys_selects, params: array(), params_ajustados: array());
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al integrar base', data: $base, header: $header, ws: $ws);
+        }
+
+        $data_view = new stdClass();
+        $data_view->names = array('Id', 'Porcentaje', 'Fecha Inicio', 'Fecha Fin','Acciones');
+        $data_view->keys_data = array('ks_comision_general_id', 'ks_comision_general_porcentaje', 'ks_comision_general_fecha_inicio',
+            'ks_comision_general_fecha_fin');
+        $data_view->key_actions = 'acciones';
+        $data_view->namespace_model = 'gamboamartin\\ks_ops\\models';
+        $data_view->name_model_children = 'ks_comision_general';
+
+        $contenido_table = $this->contenido_children(data_view: $data_view, next_accion: __FUNCTION__,
+            not_actions: $not_actions);
+        if (errores::$error) {
+            return $this->retorno_error(
+                mensaje: 'Error al obtener tbody', data: $contenido_table, header: $header, ws: $ws);
+        }
+
+        return $contenido_table;
+    }
+
+
 
     final public function modifica(bool $header, bool $ws = false): array|stdClass
     {

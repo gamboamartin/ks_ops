@@ -88,7 +88,7 @@ class ks_detalle_comision extends _modelo_parent
             return $registros;
         }
 
-        $registros = $this->validarFechas(registros: $registros);
+        $registros = $this->validar_fechas(registros: $registros);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error en validaciones de fechas', data: $registros);
         }
@@ -98,17 +98,17 @@ class ks_detalle_comision extends _modelo_parent
             return $this->error->error(mensaje: 'Error al obtener comisión general', data: $registros);
         }
 
-        $registros = $this->validarFechasInicioFin($registros, $ks_comision_general);
+        $registros = $this->validar_fechas_inicio_fin($registros, $ks_comision_general);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error en validaciones de fechas inicio fin', data: $registros);
         }
 
-        $registros = $this->validarPorcentaje($registros, $ks_comision_general);
+        $registros = $this->validar_porcentaje($registros, $ks_comision_general);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error en validaciones de porcentaje', data: $registros);
         }
 
-        $registros = $this->validarSumatoriaPorcentajes($registros, $ks_comision_general, $id);
+        $registros = $this->validar_sumatoria_porcentajes($registros, $ks_comision_general, $id);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error en validaciones de sumatoria de porcentajes', data: $registros);
         }
@@ -116,7 +116,7 @@ class ks_detalle_comision extends _modelo_parent
         return $registros;
     }
 
-    private function validarFechas(array $registros) : array
+    private function validar_fechas(array $registros) : array
     {
         if (isset($registros['fecha_inicio']) && isset($registros['fecha_fin'])) {
             $fecha_inicio = strtotime($registros['fecha_inicio']);
@@ -131,7 +131,7 @@ class ks_detalle_comision extends _modelo_parent
         return $registros;
     }
 
-    private function validarSumatoriaPorcentajes(array $registros, array $ks_comision_general, int $id = -1) : array
+    private function validar_sumatoria_porcentajes(array $registros, array $ks_comision_general, int $id = -1) : array
     {
         $resto = 0;
         if ($id > 0) {
@@ -153,7 +153,7 @@ class ks_detalle_comision extends _modelo_parent
         return $registros;
     }
 
-    private function validarFechasInicioFin(array $registros, array $ks_comision_general) : array
+    private function validar_fechas_inicio_fin(array $registros, array $ks_comision_general) : array
     {
         if (isset($registros['fecha_inicio'])) {
             $fecha_inicio_general = strtotime($ks_comision_general['ks_comision_general_fecha_inicio']);
@@ -182,7 +182,7 @@ class ks_detalle_comision extends _modelo_parent
         return $registros;
     }
 
-    private function validarPorcentaje(array $registros, array $ks_comision_general) : array
+    private function validar_porcentaje(array $registros, array $ks_comision_general) : array
     {
         if (isset($registros['porcentaje']) && $registros['porcentaje'] <= 0) {
             return $this->error->error(mensaje: 'El porcentaje debe ser mayor a 0', data: $registros);
