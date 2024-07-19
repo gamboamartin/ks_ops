@@ -89,8 +89,8 @@ class controlador_ks_detalle_comision extends _ctl_base {
         $keys->selects = array();
 
         $init_data = array();
+        $init_data['ks_comision_general'] = "gamboamartin\\ks_ops";
         $init_data['com_agente'] = "gamboamartin\\comercial";
-        $init_data['com_cliente'] = "gamboamartin\\comercial";
         $campos_view = $this->campos_view_base(init_data: $init_data, keys: $keys);
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al inicializar campo view', data: $campos_view);
@@ -125,8 +125,8 @@ class controlador_ks_detalle_comision extends _ctl_base {
 
     public function init_selects_inputs(): array{
 
-        $keys_selects = $this->init_selects(keys_selects: array(), key: "com_agente_id", label: "Agente",
-            cols: 8,columns_ds: array('com_agente_descripcion'));
+        $keys_selects = $this->init_selects(keys_selects: array(), key: "ks_comision_general_id", label: "Comisión General",
+            cols: 12,columns_ds: array('com_cliente_razon_social', 'ks_comision_general_porcentaje'));
         if(errores::$error){
             return $this->errores->error(mensaje: 'Error al integrar selector',data:  $keys_selects);
         }
@@ -145,6 +145,7 @@ class controlador_ks_detalle_comision extends _ctl_base {
         $datatables = new stdClass();
         $datatables->columns = array();
         $datatables->columns['ks_detalle_comision_id']['titulo'] = 'Id';
+        $datatables->columns['com_cliente_razon_social']['titulo'] = 'Cliente';
         $datatables->columns['com_agente_descripcion']['titulo'] = 'Agente';
         $datatables->columns['ks_detalle_comision_porcentaje']['titulo'] = 'Porcentaje';
         $datatables->columns['ks_detalle_comision_fecha_inicio']['titulo'] = 'Fecha Inicio';
@@ -194,6 +195,7 @@ class controlador_ks_detalle_comision extends _ctl_base {
                 ws: $ws);
         }
 
+        $keys_selects['ks_comision_general_id']->id_selected = $this->registro['ks_comision_general_id'];
         $keys_selects['com_agente_id']->id_selected = $this->registro['com_agente_id'];
 
         $base = $this->base_upd(keys_selects: $keys_selects, params: array(), params_ajustados: array());

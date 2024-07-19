@@ -9,7 +9,7 @@ use stdClass;
 class ks_detalle_comision extends _modelo_parent {
     public function __construct(PDO $link, array $childrens = array()){
         $tabla = 'ks_detalle_comision';
-        $columnas = array($tabla=>false, 'com_agente'=> $tabla, 'ks_comision_general'=> $tabla);
+        $columnas = array($tabla=>false, 'com_agente'=> $tabla, 'ks_comision_general'=> $tabla, 'com_cliente'=> 'ks_comision_general');
 
         $campos_obligatorios = array('com_agente_id','ks_comision_general_id');
 
