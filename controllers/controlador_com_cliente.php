@@ -13,6 +13,8 @@ use gamboamartin\direccion_postal\controllers\_init_dps;
 use gamboamartin\errores\errores;
 use base\controller\init;
 use gamboamartin\ks_ops\models\com_cliente;
+use gamboamartin\ks_ops\models\ks_comision_general;
+use gamboamartin\system\actions;
 use gamboamartin\template_1\html;
 use html\cat_sat_actividad_economica_html;
 use html\com_cliente_html;
@@ -21,6 +23,7 @@ use stdClass;
 
 final class controlador_com_cliente extends \gamboamartin\comercial\controllers\controlador_com_cliente
 {
+    public string $link_comisiones_generales_bd = '';
 
     public function __construct(PDO      $link, html $html = new \gamboamartin\template_1\html(),
                                 stdClass $paths_conf = new stdClass())
@@ -104,6 +107,42 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         $datatables->filtro = $filtro;
 
         return $datatables;
+    }
+
+    protected function init_links(): array|string
+    {
+        $links = $this->obj_link->genera_links(controler: $this);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al generar links', data: $links);
+            print_r($error);
+            exit;
+        }
+
+        $link = $this->obj_link->get_link(seccion: "com_cliente", accion: "asigna_agente_bd");
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al recuperar link asigna_agente_bd', data: $link);
+            print_r($error);
+            exit;
+        }
+        $this->link_com_rel_agente_cliente_bd = $link;
+
+        $link = $this->obj_link->get_link(seccion: "com_cliente", accion: "asigna_contacto_bd");
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al recuperar link asigna_contacto_bd', data: $link);
+            print_r($error);
+            exit;
+        }
+        $this->link_asigna_contacto_bd = $link;
+
+        $link = $this->obj_link->get_link(seccion: "com_cliente", accion: "comisiones_generales_bd");
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al recuperar link comisiones_generales_bd', data: $link);
+            print_r($error);
+            exit;
+        }
+        $this->link_comisiones_generales_bd = $link;
+
+        return $link;
     }
 
     protected function data_form(): array|stdClass
@@ -215,7 +254,50 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         return $contenido_table;
     }
 
+    public function comisiones_generales_bd(bool $header, bool $ws = false): array|stdClass
+    {
+        $this->link->beginTransaction();
 
+        $siguiente_view = (new actions())->init_alta_bd();
+        if (errores::$error) {
+            $this->link->rollBack();
+            return $this->retorno_error(mensaje: 'Error al obtener siguiente view', data: $siguiente_view,
+                header: $header, ws: $ws);
+        }
+
+        if (isset($_POST['btn_action_next'])) {
+            unset($_POST['btn_action_next']);
+        }
+
+        $registro['com_cliente_id'] = $this->registro_id;
+        $registro['porcentaje'] = $_POST['porcentaje'];
+        $registro['fecha_inicio'] = $_POST['fecha_inicio'];
+        $registro['fecha_fin'] = $_POST['fecha_fin'];
+
+        $com_contacto = new ks_comision_general($this->link);
+        $com_contacto->registro = $registro;
+        $proceso = $com_contacto->alta_bd();
+        if (errores::$error) {
+            $this->link->rollBack();
+            return $this->retorno_error(mensaje: 'Error al dar de alta comision general', data: $proceso, header: $header,
+                ws: $ws);
+        }
+
+        $this->link->commit();
+
+        if ($header) {
+            $this->retorno_base(registro_id: $this->registro_id, result: $proceso,
+                siguiente_view: "comisiones_generales", ws: $ws);
+        }
+        if ($ws) {
+            header('Content-Type: application/json');
+            echo json_encode($proceso, JSON_THROW_ON_ERROR);
+            exit;
+        }
+        $proceso->siguiente_view = "comisiones_generales";
+
+        return $proceso;
+    }
 
     final public function modifica(bool $header, bool $ws = false): array|stdClass
     {
