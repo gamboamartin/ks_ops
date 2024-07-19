@@ -1,15 +1,19 @@
 <?php
+
 namespace gamboamartin\ks_ops\models;
+
 use base\orm\_modelo_parent;
 use base\orm\modelo;
 use gamboamartin\errores\errores;
 use PDO;
 use stdClass;
 
-class ks_comision_general extends _modelo_parent {
-    public function __construct(PDO $link, array $childrens = array()){
+class ks_comision_general extends _modelo_parent
+{
+    public function __construct(PDO $link, array $childrens = array())
+    {
         $tabla = 'ks_comision_general';
-        $columnas = array($tabla=>false, 'com_cliente'=> $tabla);
+        $columnas = array($tabla => false, 'com_cliente' => $tabla);
 
         $campos_obligatorios = array('com_cliente_id');
 
@@ -26,6 +30,11 @@ class ks_comision_general extends _modelo_parent {
         $this->registro = $this->inicializa_campos($this->registro);
         if (errores::$error) {
             return $this->error->error(mensaje: 'Error al inicializar campo base', data: $this->registro);
+        }
+
+        $this->registro = $this->validaciones($this->registro);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error en validaciones', data: $this->registro);
         }
 
         $r_alta_bd = parent::alta_bd(keys_integra_ds: $keys_integra_ds);
@@ -51,6 +60,37 @@ class ks_comision_general extends _modelo_parent {
 
         if (!array_key_exists('fecha_inicio', $registros)) {
             $registros['fecha_inicio'] = '2200-01-0';
+        }
+
+        return $registros;
+    }
+
+    public function modifica_bd(array $registro, int $id, bool $reactiva = false,
+                                array $keys_integra_ds = array('descripcion')): array|stdClass
+    {
+        $validacion = $this->validaciones(registros: $registro);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error en validaciones', data: $validacion);
+        }
+
+        $modifica = parent::modifica_bd($registro, $id, $reactiva, $keys_integra_ds);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error de validacion', data: $validacion);
+
+        }
+        return $modifica;
+    }
+
+    protected function validaciones(array $registros): array
+    {
+        if (isset($registros['fecha_inicio']) && isset($registros['fecha_fin'])) {
+            $fecha_inicio = strtotime($registros['fecha_inicio']);
+            $fecha_fin = strtotime($registros['fecha_fin']);
+
+            if ($fecha_inicio > $fecha_fin) {
+                return $this->error->error(mensaje: 'La fecha de inicio debe ser anterior a la fecha de fin.',
+                    data: $registros);
+            }
         }
 
         return $registros;
