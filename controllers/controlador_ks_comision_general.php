@@ -158,14 +158,20 @@ class controlador_ks_comision_general extends _ctl_base {
 
     public function get_ultimo_registro(bool $header, bool $ws = true): array|stdClass
     {
-        $keys['com_cliente'] = array('id', 'descripcion', 'codigo');
-
-        $salida = $this->get_out(header: $header, keys: $keys, ws: $ws);
-        if (errores::$error) {
-            return $this->retorno_error(mensaje: 'Error al generar salida', data: $salida, header: $header, ws: $ws);
+        if (!isset($_GET['com_cliente_id'])) {
+            return $this->retorno_error(mensaje: 'Error el campo com_cliente_id no existe', data: $_GET, header: $header, ws: $ws);
         }
 
-        return $salida;
+        $ultimo_registro = (new ks_comision_general($this->link))->ultimo_registro_x_cliente(com_cliente_id: $_GET['com_cliente_id']);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al integrar buttons', data: $ultimo_registro, header: $header, ws: $ws);
+        }
+
+        $salida['data'] = $ultimo_registro;
+
+        header('Content-Type: application/json');
+        echo json_encode($salida);
+        exit;
     }
 
     protected function key_selects_txt(array $keys_selects): array
