@@ -9,6 +9,7 @@
 namespace gamboamartin\ks_ops\controllers;
 
 use base\controller\controler;
+use gamboamartin\comercial\models\com_cliente;
 use gamboamartin\errores\errores;
 use gamboamartin\ks_ops\html\ks_cliente_html;
 use gamboamartin\ks_ops\html\ks_comision_general_html;
@@ -67,6 +68,10 @@ class controlador_ks_comision_general extends _ctl_base {
         $keys_selects = $this->init_selects_inputs();
         if (errores::$error) {return $this->errores->error(mensaje: 'Error al inicializar selects', data: $keys_selects);
         }
+
+        $ultimo_registro = (new ks_comision_general(link: $this->link))->ultimo_registro_x_cliente(com_cliente_id:1);
+
+
 
         $this->row_upd->fecha_inicio = date('Y-m-d');
         $this->row_upd->fecha_fin = date('Y-m-d');
@@ -149,6 +154,18 @@ class controlador_ks_comision_general extends _ctl_base {
         $datatables->filtro[] = 'com_cliente.razon_social';
 
         return $datatables;
+    }
+
+    public function get_ultimo_registro(bool $header, bool $ws = true): array|stdClass
+    {
+        $keys['com_cliente'] = array('id', 'descripcion', 'codigo');
+
+        $salida = $this->get_out(header: $header, keys: $keys, ws: $ws);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al generar salida', data: $salida, header: $header, ws: $ws);
+        }
+
+        return $salida;
     }
 
     protected function key_selects_txt(array $keys_selects): array
