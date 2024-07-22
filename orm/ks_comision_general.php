@@ -96,4 +96,20 @@ class ks_comision_general extends _modelo_parent
         return $registros;
     }
 
+    public function ultimo_registro_x_cliente(int $com_cliente_id) : array|stdClass
+    {
+        $filtro = array('com_cliente_id' => $com_cliente_id);
+        $order = array('fecha_fin' => 'DESC');
+        $registro = $this->filtro_and(filtro: $filtro, order: $order);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener el último registro', data: $registro);
+        }
+
+        if ($registro->n_registros == 0) {
+            return array();
+        }
+
+        return $registro->registros[0];
+    }
+
 }
