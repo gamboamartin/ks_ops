@@ -164,7 +164,7 @@ class controlador_ks_comision_general extends _ctl_base {
 
         $ultimo_registro = (new ks_comision_general($this->link))->ultimo_registro_x_cliente(com_cliente_id: $_GET['com_cliente_id']);
         if (errores::$error) {
-            return $this->retorno_error(mensaje: 'Error al integrar buttons', data: $ultimo_registro, header: $header, ws: $ws);
+            return $this->retorno_error(mensaje: 'Error al obtener datos', data: $ultimo_registro, header: $header, ws: $ws);
         }
 
         $salida['data'] = $ultimo_registro;

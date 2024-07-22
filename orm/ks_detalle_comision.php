@@ -210,4 +210,20 @@ class ks_detalle_comision extends _modelo_parent
 
         return $suma['suma'];
     }
+
+    public function ultimo_registro_x_comision(int $ks_comision_general_id) : array|stdClass
+    {
+        $filtro = array('ks_comision_general_id' => $ks_comision_general_id);
+        $order = array('fecha_fin' => 'DESC');
+        $registro = $this->filtro_and(filtro: $filtro, order: $order);
+        if (errores::$error) {
+            return $this->error->error(mensaje: 'Error al obtener el último registro', data: $registro);
+        }
+
+        if ($registro->n_registros == 0) {
+            return array();
+        }
+
+        return $registro->registros[0];
+    }
 }
