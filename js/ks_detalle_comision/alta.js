@@ -45,5 +45,8 @@ function asigna_datos(ks_comision_general_id) {
 
 sl_ks_comision_general.change(function () {
     ks_comision_general_id = $(this).val();
-    asigna_datos(ks_comision_general_id);
+
+    if (ks_comision_general_id != '') {
+        asigna_datos(ks_comision_general_id);
+    }
 });

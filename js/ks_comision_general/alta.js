@@ -44,5 +44,8 @@ function asigna_datos(com_cliente_id) {
 
 sl_com_cliente.change(function () {
     com_cliente_id = $(this).val();
-    asigna_datos(com_cliente_id);
+
+    if (com_cliente_id != '') {
+        asigna_datos(com_cliente_id);
+    }
 });
