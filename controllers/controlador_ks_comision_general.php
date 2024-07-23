@@ -25,6 +25,8 @@ class controlador_ks_comision_general extends _ctl_base {
 
     public array|stdClass $keys_selects = array();
 
+    public string $link_registra_detalle_comision_bd = '';
+
     public function __construct(PDO      $link, html $html = new \gamboamartin\template_1\html(),
                                 stdClass $paths_conf = new stdClass())
     {
@@ -56,6 +58,13 @@ class controlador_ks_comision_general extends _ctl_base {
             die('Error');
         }
 
+        $init_links = $this->init_links();
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al inicializar links', data: $init_links);
+            print_r($error);
+            die('Error');
+        }
+
     }
 
     public function alta(bool $header, bool $ws = false): array|string
@@ -68,10 +77,6 @@ class controlador_ks_comision_general extends _ctl_base {
         $keys_selects = $this->init_selects_inputs();
         if (errores::$error) {return $this->errores->error(mensaje: 'Error al inicializar selects', data: $keys_selects);
         }
-
-        $ultimo_registro = (new ks_comision_general(link: $this->link))->ultimo_registro_x_cliente(com_cliente_id:1);
-
-
 
         $this->row_upd->fecha_inicio = date('Y-m-d');
         $this->row_upd->fecha_fin = date('Y-m-d');
@@ -93,6 +98,7 @@ class controlador_ks_comision_general extends _ctl_base {
 
         $init_data = array();
         $init_data['com_cliente'] = "gamboamartin\\comercial";
+        $init_data['com_agente'] = "gamboamartin\\comercial";
         $campos_view = $this->campos_view_base(init_data: $init_data, keys: $keys);
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al inicializar campo view', data: $campos_view);
@@ -113,6 +119,26 @@ class controlador_ks_comision_general extends _ctl_base {
         return $this;
     }
 
+    protected function init_links(): array|string
+    {
+        $links = $this->obj_link->genera_links(controler: $this);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al generar links', data: $links);
+            print_r($error);
+            exit;
+        }
+
+        $link = $this->obj_link->get_link(seccion: "ks_comision_general", accion: "detalle_comision_bd");
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al recuperar link detalle_comision_bd', data: $link);
+            print_r($error);
+            exit;
+        }
+        $this->link_registra_detalle_comision_bd = $link;
+
+        return $link;
+    }
+
     private function init_selects(array $keys_selects, string $key, string $label, int|null $id_selected = -1, int $cols = 6,
                                   bool  $con_registros = true, array $filtro = array(), array $columns_ds =  array()): array
     {
@@ -129,6 +155,12 @@ class controlador_ks_comision_general extends _ctl_base {
 
         $keys_selects = $this->init_selects(keys_selects: array(), key: "com_cliente_id", label: "Cliente",
             cols: 8,columns_ds: array('com_cliente_razon_social'));
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error al integrar selector',data:  $keys_selects);
+        }
+
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "com_agente_id", label: "Agente",
+            cols: 8,columns_ds: array('com_agente_descripcion'));
         if(errores::$error){
             return $this->errores->error(mensaje: 'Error al integrar selector',data:  $keys_selects);
         }
@@ -172,6 +204,45 @@ class controlador_ks_comision_general extends _ctl_base {
         header('Content-Type: application/json');
         echo json_encode($salida);
         exit;
+    }
+
+    public function detalle_comision(bool $header, bool $ws = false, array $not_actions = array()): array|string
+    {
+        $this->accion_titulo = 'Detalles de Comisión';
+
+        $r_modifica = $this->init_modifica();
+        if (errores::$error) {
+            return $this->retorno_error(
+                mensaje: 'Error al generar salida de template', data: $r_modifica, header: $header, ws: $ws);
+        }
+
+        $keys_selects = $this->init_selects_inputs();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
+                ws: $ws);
+        }
+
+        $base = $this->base_upd(keys_selects: $keys_selects, params: array(), params_ajustados: array());
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al integrar base', data: $base, header: $header, ws: $ws);
+        }
+
+        $data_view = new stdClass();
+        $data_view->names = array('Id', 'Cliente', 'Agente', 'Porcentaje', 'Fecha Inicio', 'Fecha Fin','Acciones');
+        $data_view->keys_data = array('ks_detalle_comision_id', 'com_cliente_razon_social', 'com_agente_descripcion',
+            'ks_detalle_comision_porcentaje', 'ks_detalle_comision_fecha_inicio', 'ks_detalle_comision_fecha_fin');
+        $data_view->key_actions = 'acciones';
+        $data_view->namespace_model = 'gamboamartin\\ks_ops\\models';
+        $data_view->name_model_children = 'ks_detalle_comision';
+
+        $contenido_table = $this->contenido_children(data_view: $data_view, next_accion: __FUNCTION__,
+            not_actions: $not_actions);
+        if (errores::$error) {
+            return $this->retorno_error(
+                mensaje: 'Error al obtener tbody', data: $contenido_table, header: $header, ws: $ws);
+        }
+
+        return $contenido_table;
     }
 
     protected function key_selects_txt(array $keys_selects): array

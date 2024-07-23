@@ -1,1 +1,1 @@
-$('#com_rel_agente_cliente').DataTable();
+$('#ks_detalle_comision').DataTable();
