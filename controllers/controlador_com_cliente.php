@@ -228,8 +228,13 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
             return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
         }
 
-        $this->row_upd->fecha_inicio = date('Y-m-d');
-        $this->row_upd->fecha_fin = date('Y-m-d');
+        $ultimo_registro = (new ks_comision_general($this->link))->ultimo_registro_x_cliente(com_cliente_id: $this->registro_id);
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al obtener datos', data: $ultimo_registro, header: $header, ws: $ws);
+        }
+
+        $this->row_upd->fecha_inicio = $ultimo_registro['ks_comision_general_fecha_fin'];
+        $this->row_upd->fecha_fin = $ultimo_registro['ks_comision_general_fecha_inicio'];
 
         $base = $this->base_upd(keys_selects: $keys_selects, params: array(), params_ajustados: array());
         if (errores::$error) {
