@@ -227,6 +227,21 @@ class controlador_ks_comision_general extends _ctl_base {
 
         $this->row_upd->porcentaje = "";
 
+        $agentes_asignados = (new ks_detalle_comision(link: $this->link))->filtro_and(columnas: array('com_agente_id'),
+            filtro: array('ks_comision_general_id' => $this->registro_id));
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al obtener agentes asignados', data: $agentes_asignados,
+                header: $header, ws: $ws);
+        }
+
+        $agentes_asignados = $agentes_asignados->registros;
+        $agentes_asignados = call_user_func_array('array_merge', array_map('array_values', $agentes_asignados));
+
+        $keys_selects['com_agente_id']->not_in['llave'] = 'com_agente.id';
+        $keys_selects['com_agente_id']->not_in['values'] = $agentes_asignados;
+
+
+
         $base = $this->base_upd(keys_selects: $keys_selects, params: array(), params_ajustados: array());
         if (errores::$error) {
             return $this->retorno_error(mensaje: 'Error al integrar base', data: $base, header: $header, ws: $ws);
