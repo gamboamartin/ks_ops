@@ -24,6 +24,10 @@ function asigna_datos(com_cliente_id) {
     let url = get_url("ks_comision_general", "get_ultimo_registro", {com_cliente_id: com_cliente_id});
 
     get_data(url, function (data) {
+        if (data.data.length === 0) {
+            return;
+        }
+
         console.log(data);
         let fecha_inicio = new Date(data.data.ks_comision_general_fecha_fin);
         let fecha_fin = new Date(data.data.ks_comision_general_fecha_inicio);
