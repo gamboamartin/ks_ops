@@ -25,12 +25,12 @@
                         </div>
                     </form>
                 </div>
-
             </div>
-
+        </div>
+        <div class="col-md-12 buttons-form">
+            <?php echo $controlador->button_ks_comision_general; ?>
         </div>
     </div>
-
 </main>
 
 <main class="main section-color-primary">

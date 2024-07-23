@@ -28,6 +28,7 @@ class controlador_ks_comision_general extends _ctl_base {
     public array|stdClass $keys_selects = array();
 
     public string $link_registra_detalle_comision_bd = '';
+    public string $button_ks_comision_general = '';
 
     public function __construct(PDO      $link, html $html = new \gamboamartin\template_1\html(),
                                 stdClass $paths_conf = new stdClass())
@@ -230,6 +231,14 @@ class controlador_ks_comision_general extends _ctl_base {
         if (errores::$error) {
             return $this->retorno_error(mensaje: 'Error al integrar base', data: $base, header: $header, ws: $ws);
         }
+
+        $button =  $this->html->button_href(accion: 'comisiones_generales', etiqueta: 'Ir a Comisión de Cliente',
+            registro_id: $this->registro['com_cliente_id'], seccion: "com_cliente", style: 'warning', params: array());
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al generar link', data: $button);
+        }
+
+        $this->button_ks_comision_general = $button;
 
         $data_view = new stdClass();
         $data_view->names = array('Id', 'Cliente', 'Agente', 'Porcentaje', 'Fecha Inicio', 'Fecha Fin','Acciones');
