@@ -9,6 +9,7 @@
 
 namespace gamboamartin\ks_ops\controllers;
 
+use DateTime;
 use gamboamartin\direccion_postal\controllers\_init_dps;
 use gamboamartin\errores\errores;
 use base\controller\init;
@@ -57,7 +58,7 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
     protected function campos_view(): array
     {
         $keys = new stdClass();
-        $keys->inputs = array('codigo', 'razon_social', 'rfc','numero_exterior', 'numero_interior',
+        $keys->inputs = array('codigo', 'razon_social', 'rfc', 'numero_exterior', 'numero_interior',
             'cp', 'colonia', 'calle', 'nombre', 'ap', 'am', 'porcentaje');
         $keys->telefonos = array('telefono');
         $keys->emails = array('correo');
@@ -100,7 +101,7 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         $columns["com_cliente_telefono"]["titulo"] = "Teléfono ";
 
         $filtro = array("com_cliente.id", "com_cliente.codigo", "com_cliente.razon_social", "com_cliente.rfc",
-            "com_cliente.telefono",'com_tipo_cliente.descripcion','cat_sat_actividad_economica.descripcion');
+            "com_cliente.telefono", 'com_tipo_cliente.descripcion', 'cat_sat_actividad_economica.descripcion');
 
         $datatables = new stdClass();
         $datatables->columns = $columns;
@@ -181,8 +182,8 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         }
 
         $cat_sat_actividad_economica_id = (
-            new cat_sat_actividad_economica_html(html: $this->html_base))->select_cat_sat_actividad_economica_id(
-                cols: 12, con_registros: true,id_selected: -1,link: $this->link,label: 'Giro/Actividad');
+        new cat_sat_actividad_economica_html(html: $this->html_base))->select_cat_sat_actividad_economica_id(
+                cols: 12, con_registros: true, id_selected: -1, link: $this->link, label: 'Giro/Actividad');
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al obtener cat_sat_actividad_economica_id',
                 data: $cat_sat_actividad_economica_id);
@@ -233,8 +234,20 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
             return $this->retorno_error(mensaje: 'Error al obtener datos', data: $ultimo_registro, header: $header, ws: $ws);
         }
 
-        $this->row_upd->fecha_inicio = $ultimo_registro['ks_comision_general_fecha_fin'];
-        $this->row_upd->fecha_fin = $ultimo_registro['ks_comision_general_fecha_inicio'];
+        $this->row_upd->fecha_inicio = date('Y-m-d');
+        $this->row_upd->fecha_fin = date('Y-m-d');
+
+        if (!empty($ultimo_registro)) {
+            $fecha_fin = new DateTime($ultimo_registro['ks_comision_general_fecha_fin']);
+            $fecha_inicio = new DateTime($ultimo_registro['ks_comision_general_fecha_inicio']);
+
+            $fecha_fin->modify('+1 day');
+            $fecha_inicio->modify('+1 year');
+
+            $this->row_upd->fecha_inicio = $fecha_fin->format('Y-m-d');
+            $this->row_upd->fecha_fin = $fecha_inicio->format('Y-m-d');
+        }
+
 
         $base = $this->base_upd(keys_selects: $keys_selects, params: array(), params_ajustados: array());
         if (errores::$error) {
@@ -242,7 +255,7 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         }
 
         $data_view = new stdClass();
-        $data_view->names = array('Id', 'Porcentaje', 'Fecha Inicio', 'Fecha Fin','Acciones');
+        $data_view->names = array('Id', 'Porcentaje', 'Fecha Inicio', 'Fecha Fin', 'Acciones');
         $data_view->keys_data = array('ks_comision_general_id', 'ks_comision_general_porcentaje', 'ks_comision_general_fecha_inicio',
             'ks_comision_general_fecha_fin');
         $data_view->key_actions = 'acciones';
@@ -320,8 +333,8 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
 
         $cat_sat_actividad_economica_id = (
         new cat_sat_actividad_economica_html(html: $this->html_base))->select_cat_sat_actividad_economica_id(
-                cols: 12, con_registros: true,id_selected: $com_cliente->cat_sat_actividad_economica_id,
-                link: $this->link,label: 'Giro/Actividad');
+                cols: 12, con_registros: true, id_selected: $com_cliente->cat_sat_actividad_economica_id,
+                link: $this->link, label: 'Giro/Actividad');
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al obtener cat_sat_actividad_economica_id',
                 data: $cat_sat_actividad_economica_id);
