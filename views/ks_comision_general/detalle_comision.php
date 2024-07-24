@@ -14,6 +14,7 @@
                         <?php include (new views())->ruta_templates . "head/title.php"; ?>
                         <?php include (new views())->ruta_templates . "head/subtitulo.php"; ?>
                         <?php include (new views())->ruta_templates . "mensajes.php"; ?>
+                        <?php echo $controlador->inputs->ks_comision_general_id; ?>
                         <?php echo $controlador->inputs->com_agente_id; ?>
                         <?php echo $controlador->inputs->porcentaje; ?>
                         <?php echo $controlador->inputs->fecha_inicio; ?>

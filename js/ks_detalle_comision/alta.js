@@ -34,7 +34,7 @@ function asigna_datos(ks_comision_general_id) {
         let fecha_fin = new Date(data.data.ks_detalle_comision_fecha_inicio);
 
         fecha_inicio.setDate(fecha_fin.getDate() + 1);
-        fecha_fin.setFullYear(fecha_fin.getFullYear() + 1);
+        //fecha_fin.setFullYear(fecha_fin.getFullYear() + 1);
 
         let fecha_inicio_formateada = fecha_inicio.toISOString().split('T')[0];
         let fecha_fin_formateada = fecha_fin.toISOString().split('T')[0];

@@ -102,6 +102,7 @@ class controlador_ks_comision_general extends _ctl_base {
         $init_data = array();
         $init_data['com_cliente'] = "gamboamartin\\comercial";
         $init_data['com_agente'] = "gamboamartin\\comercial";
+        $init_data['ks_comision_general'] = "gamboamartin\\ks_ops";
         $campos_view = $this->campos_view_base(init_data: $init_data, keys: $keys);
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al inicializar campo view', data: $campos_view);
@@ -164,6 +165,12 @@ class controlador_ks_comision_general extends _ctl_base {
 
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "com_agente_id", label: "Agente",
             cols: 8,columns_ds: array('com_agente_descripcion'));
+        if(errores::$error){
+            return $this->errores->error(mensaje: 'Error al integrar selector',data:  $keys_selects);
+        }
+
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "ks_comision_general_id", label: "Comisión General",
+            cols: 12,columns_ds: array('com_cliente_razon_social', 'ks_comision_general_porcentaje'));
         if(errores::$error){
             return $this->errores->error(mensaje: 'Error al integrar selector',data:  $keys_selects);
         }
@@ -240,7 +247,9 @@ class controlador_ks_comision_general extends _ctl_base {
         $keys_selects['com_agente_id']->not_in['llave'] = 'com_agente.id';
         $keys_selects['com_agente_id']->not_in['values'] = $agentes_asignados;
 
-
+        $keys_selects['ks_comision_general_id']->id_selected = $this->registro_id;
+        $keys_selects['ks_comision_general_id']->filtro = array('ks_comision_general.id' => $this->registro_id);
+        $keys_selects['ks_comision_general_id']->disabled = true;
 
         $base = $this->base_upd(keys_selects: $keys_selects, params: array(), params_ajustados: array());
         if (errores::$error) {
