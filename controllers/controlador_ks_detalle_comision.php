@@ -160,11 +160,16 @@ class controlador_ks_detalle_comision extends _ctl_base {
 
     public function get_ultimo_registro(bool $header, bool $ws = true): array|stdClass
     {
-        if (!isset($_GET['ks_comision_general_id'])) {
-            return $this->retorno_error(mensaje: 'Error el campo ks_comision_general_id no existe', data: $_GET, header: $header, ws: $ws);
+        if (!isset($_GET['nombre_campo'])) {
+            return $this->retorno_error(mensaje: 'Error nombre_campo no existe', data: $_GET, header: $header, ws: $ws);
         }
 
-        $ultimo_registro = (new ks_detalle_comision($this->link))->ultimo_registro_x_comision(ks_comision_general_id: $_GET['ks_comision_general_id']);
+        if (!isset($_GET['valor'])) {
+            return $this->retorno_error(mensaje: 'Error valor no existe', data: $_GET, header: $header, ws: $ws);
+        }
+
+        $ultimo_registro = (new ks_detalle_comision($this->link))->ultimo_registro_x_comision(campo: $_GET['nombre_campo'],
+            valor: $_GET['valor']);
         if (errores::$error) {
             return $this->retorno_error(mensaje: 'Error al obtener datos', data: $ultimo_registro, header: $header, ws: $ws);
         }

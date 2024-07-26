@@ -211,9 +211,9 @@ class ks_detalle_comision extends _modelo_parent
         return $suma['suma'];
     }
 
-    public function ultimo_registro_x_comision(int $ks_comision_general_id) : array|stdClass
+    public function ultimo_registro_x_comision(string $campo, int $valor) : array|stdClass
     {
-        $filtro = array('ks_comision_general_id' => $ks_comision_general_id);
+        $filtro = array($campo => $valor);
         $order = array('ks_detalle_comision_fecha_fin' => 'DESC');
         $registro = $this->filtro_and(filtro: $filtro, order: $order);
         if (errores::$error) {
