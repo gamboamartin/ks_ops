@@ -22,7 +22,7 @@ var date_fecha_fin = document.getElementById('fecha_fin');
 
 function asigna_datos(ks_comision_general_id) {
 
-    let url = get_url("ks_detalle_comision", "get_ultimo_registro", {ks_comision_general_id: ks_comision_general_id});
+    let url = get_url("ks_detalle_comision", "get_ultimo_registro", {nombre_campo: 'ks_comision_general_id', valor: ks_comision_general_id});
 
     get_data(url, function (data) {
         if (data.data.length === 0) {
