@@ -96,7 +96,7 @@ class controlador_ks_comision_general extends _ctl_base {
     {
         $keys = new stdClass();
         $keys->inputs = array('porcentaje');
-        $keys->fechas = array('fecha_inicio', 'fecha_fin');
+        $keys->fechas = array('fecha_inicio', 'fecha_fin','fecha_inicio_disabled', 'fecha_fin_disabled');
         $keys->selects = array();
 
         $init_data = array();
@@ -233,6 +233,8 @@ class controlador_ks_comision_general extends _ctl_base {
         }
 
         $this->row_upd->porcentaje = "";
+        $this->row_upd->fecha_inicio_disabled = $this->registro['ks_comision_general_fecha_inicio'];
+        $this->row_upd->fecha_fin_disabled = $this->registro['ks_comision_general_fecha_fin'];
 
         $keys_selects['ks_comision_general_id']->id_selected = $this->registro_id;
         $keys_selects['ks_comision_general_id']->filtro = array('ks_comision_general.id' => $this->registro_id);
@@ -334,6 +336,20 @@ class controlador_ks_comision_general extends _ctl_base {
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
         }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'fecha_inicio_disabled',
+            keys_selects: $keys_selects, place_holder: 'Fecha Inicio');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+        $keys_selects['fecha_inicio_disabled']->disabled = true;
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'fecha_fin_disabled',
+            keys_selects: $keys_selects, place_holder: 'Fecha Fin');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+        $keys_selects['fecha_fin_disabled']->disabled = true;
 
         return $keys_selects;
     }
