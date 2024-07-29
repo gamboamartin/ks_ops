@@ -23,4 +23,13 @@ final class controlador_em_empleado extends \gamboamartin\empleado\controllers\c
 
         $this->childrens_data = array();
     }
+
+    public function init_selects_inputs(): array
+    {
+        $keys_selects = parent::init_selects_inputs();
+        $keys_selects['cat_sat_regimen_fiscal_id']->cols = 12;
+
+        return $keys_selects;
+    }
+
 }

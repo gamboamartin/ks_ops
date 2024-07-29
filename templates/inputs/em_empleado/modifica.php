@@ -12,16 +12,10 @@
 <?php echo $controlador->inputs->dp_calle_pertenece_id; ?>
 <?php echo $controlador->inputs->cat_sat_regimen_fiscal_id; ?>
 <?php echo $controlador->inputs->org_puesto_id; ?>
-<?php echo $controlador->inputs->cat_sat_tipo_regimen_nom_id; ?>
-<?php echo $controlador->inputs->cat_sat_tipo_jornada_nom_id; ?>
+<?php echo $controlador->inputs->em_registro_patronal_id; ?>
 <?php echo $controlador->inputs->rfc; ?>
 <?php echo $controlador->inputs->nss; ?>
 <?php echo $controlador->inputs->curp; ?>
-<?php echo $controlador->inputs->em_registro_patronal_id; ?>
-<?php echo $controlador->inputs->em_centro_costo_id; ?>
-<?php echo $controlador->inputs->salario_diario; ?>
-<?php echo $controlador->inputs->salario_diario_integrado; ?>
-<?php echo $controlador->inputs->salario_total; ?>
 <?php include (new views())->ruta_templates.'botons/submit/modifica_bd.php';?>
 <div class="col-row-12">
     <?php foreach ($controlador->buttons as $button){ ?>

@@ -31,6 +31,9 @@ function asigna_datos(com_agente_id) {
         if (fecha_inicio.getDate() < fecha_fin.getDate()) {
             fecha_inicio.setDate(fecha_fin.getDate() + 1);
         }
+        console.log({data})
+        console.log(fecha_inicio);
+        console.log(fecha_fin);
 
         let fecha_inicio_formateada = fecha_inicio.toISOString().split('T')[0];
          date_fecha_inicio.value = fecha_inicio_formateada;
