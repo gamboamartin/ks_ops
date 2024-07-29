@@ -32,4 +32,14 @@ final class controlador_em_empleado extends \gamboamartin\empleado\controllers\c
         return $keys_selects;
     }
 
+    protected function key_selects_txt(array $keys_selects): array
+    {
+        $keys_selects = parent::key_selects_txt($keys_selects);
+        $keys_selects['rfc']->cols = 4;
+        $keys_selects['curp']->cols = 4;
+        $keys_selects['nss']->cols = 4;
+
+        return $keys_selects;
+    }
+
 }
