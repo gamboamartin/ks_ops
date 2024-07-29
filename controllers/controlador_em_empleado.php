@@ -28,7 +28,6 @@ final class controlador_em_empleado extends \gamboamartin\empleado\controllers\c
     {
         $keys_selects = parent::init_selects_inputs();
         $keys_selects['cat_sat_regimen_fiscal_id']->cols = 12;
-        $keys_selects['bn_sucursal_id']->cols = 4;
 
         return $keys_selects;
     }
