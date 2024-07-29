@@ -186,12 +186,79 @@ class instalacion
 
     }
 
+    private function com_contacto(PDO $link): array|stdClass
+    {
+
+        $adm_menu_descripcion = 'Clientes';
+        $adm_sistema_descripcion = 'ks_ops';
+        $etiqueta_label = 'Contactos';
+        $adm_seccion_pertenece_descripcion = __FUNCTION__;
+        $adm_namespace_name = 'gamboamartin/ks_ops';
+        $adm_namespace_descripcion = 'gamboa.martin/ks_ops';
+
+        $adm_acciones_basicas = (new _adm())->acl_base(adm_menu_descripcion: $adm_menu_descripcion,
+            adm_namespace_descripcion:  $adm_namespace_descripcion,adm_namespace_name:  $adm_namespace_name,
+            adm_seccion_descripcion: __FUNCTION__,
+            adm_seccion_pertenece_descripcion:  $adm_seccion_pertenece_descripcion,
+            adm_sistema_descripcion:  $adm_sistema_descripcion, etiqueta_label: $etiqueta_label,link:  $link);
+        if(errores::$error){
+            return (new errores())->error(mensaje: 'Error al obtener acciones basicas', data:  $adm_acciones_basicas);
+        }
+
+        return $adm_acciones_basicas;
+
+    }
+
+    private function com_contacto_user(PDO $link): array|stdClass
+    {
+        $adm_menu_descripcion = 'Clientes';
+        $adm_sistema_descripcion = 'ks_ops';
+        $etiqueta_label = 'Usuarios de cliente';
+        $adm_seccion_pertenece_descripcion = 'com_contacto_user';
+        $adm_namespace_descripcion = 'gamboa.martin/ks_ops';
+        $adm_namespace_name = 'gamboamartin/ks_ops';
+
+        $acl = (new _adm())->integra_acl(adm_menu_descripcion: $adm_menu_descripcion,
+            adm_namespace_name: $adm_namespace_name, adm_namespace_descripcion: $adm_namespace_descripcion,
+            adm_seccion_descripcion: __FUNCTION__, adm_seccion_pertenece_descripcion: $adm_seccion_pertenece_descripcion,
+            adm_sistema_descripcion: $adm_sistema_descripcion, etiqueta_label: $etiqueta_label, link: $link);
+        if(errores::$error){
+            return (new errores())->error(mensaje: 'Error al obtener acl', data:  $acl);
+        }
+
+        return $acl;
+
+    }
+
     private function com_tipo_cliente(PDO $link): array|stdClass
     {
 
         $adm_menu_descripcion = 'Comercial';
         $adm_sistema_descripcion = 'ks_ops';
         $etiqueta_label = 'Tipo de Clientes';
+        $adm_seccion_pertenece_descripcion = __FUNCTION__;
+        $adm_namespace_name = 'gamboamartin/ks_ops';
+        $adm_namespace_descripcion = 'gamboa.martin/ks_ops';
+
+        $adm_acciones_basicas = (new _adm())->acl_base(adm_menu_descripcion: $adm_menu_descripcion,
+            adm_namespace_descripcion:  $adm_namespace_descripcion,adm_namespace_name:  $adm_namespace_name,
+            adm_seccion_descripcion: __FUNCTION__,
+            adm_seccion_pertenece_descripcion:  $adm_seccion_pertenece_descripcion,
+            adm_sistema_descripcion:  $adm_sistema_descripcion, etiqueta_label: $etiqueta_label,link:  $link);
+        if(errores::$error){
+            return (new errores())->error(mensaje: 'Error al obtener acciones basicas', data:  $adm_acciones_basicas);
+        }
+
+        return $adm_acciones_basicas;
+
+    }
+
+    private function com_tipo_contacto(PDO $link): array|stdClass
+    {
+
+        $adm_menu_descripcion = 'Clientes';
+        $adm_sistema_descripcion = 'ks_ops';
+        $etiqueta_label = 'Tipos de Contacto';
         $adm_seccion_pertenece_descripcion = __FUNCTION__;
         $adm_namespace_name = 'gamboamartin/ks_ops';
         $adm_namespace_descripcion = 'gamboa.martin/ks_ops';
@@ -258,6 +325,12 @@ class instalacion
             return (new errores())->error(mensaje: 'Error al ajustar com_tipo_cliente', data:  $com_tipo_cliente);
         }
         $result->com_tipo_cliente = $com_tipo_cliente;
+
+        $com_tipo_contacto = $this->com_tipo_contacto(link: $link);
+        if(errores::$error){
+            return (new errores())->error(mensaje: 'Error al ajustar com_tipo_contacto', data:  $com_tipo_contacto);
+        }
+        $result->com_tipo_contacto = $com_tipo_contacto;
 
 
         $adm_seccion = $this->adm_seccion(link: $link);
@@ -327,6 +400,18 @@ class instalacion
             return (new errores())->error(mensaje: 'Error al ajustar ks_cliente', data:  $ks_cliente);
         }
         $result->ks_cliente = $ks_cliente;
+
+        $com_contacto = $this->com_contacto(link: $link);
+        if(errores::$error){
+            return (new errores())->error(mensaje: 'Error al ajustar com_contacto', data:  $com_contacto);
+        }
+        $result->com_contacto = $com_contacto;
+
+        $com_contacto_user = $this->com_contacto_user(link: $link);
+        if(errores::$error){
+            return (new errores())->error(mensaje: 'Error al ajustar com_contacto_user', data:  $com_contacto_user);
+        }
+        $result->com_contacto_user = $com_contacto_user;
 
         return $result;
 
