@@ -25,6 +25,7 @@ use stdClass;
 final class controlador_com_cliente extends \gamboamartin\comercial\controllers\controlador_com_cliente
 {
     public string $link_comisiones_generales_bd = '';
+    public string $link_asigna_empleado_bd = '';
 
     public function __construct(PDO      $link, html $html = new \gamboamartin\template_1\html(),
                                 stdClass $paths_conf = new stdClass())
@@ -90,6 +91,53 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         return $campos_view;
     }
 
+    public function asigna_empleado(bool $header, bool $ws = false, array $not_actions = array()): array|string
+    {
+        $this->accion_titulo = 'Asignar Empleado';
+
+        $r_modifica = $this->init_modifica();
+        if (errores::$error) {
+            return $this->retorno_error(
+                mensaje: 'Error al generar salida de template', data: $r_modifica, header: $header, ws: $ws);
+        }
+
+        $keys_selects = $this->init_selects_inputs();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
+                ws: $ws);
+        }
+
+        $base = $this->base_upd(keys_selects: $keys_selects, params: array(), params_ajustados: array());
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al integrar base', data: $base, header: $header, ws: $ws);
+        }
+
+        $button =  $this->html->button_href(accion: 'modifica', etiqueta: 'Ir a Cliente',
+            registro_id: $this->registro_id, seccion: $this->tabla, style: 'warning', params: array());
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al generar link', data: $button);
+        }
+
+        $this->button_com_cliente_modifica = $button;
+
+        $data_view = new stdClass();
+        $data_view->names = array('Id', 'Empleado', 'RFC', 'NSS', 'Puesto','Acciones');
+        $data_view->keys_data = array('ks_cliente_empleado_id', 'em_empleado_nombre', 'em_empleado_rfc', 'em_empleado_nss',
+            'org_puesto_descripcion');
+        $data_view->key_actions = 'acciones';
+        $data_view->namespace_model = 'gamboamartin\\ks_ops\\models';
+        $data_view->name_model_children = 'ks_cliente_empleado';
+
+        $contenido_table = $this->contenido_children(data_view: $data_view, next_accion: __FUNCTION__,
+            not_actions: $not_actions);
+        if (errores::$error) {
+            return $this->retorno_error(
+                mensaje: 'Error al obtener tbody', data: $contenido_table, header: $header, ws: $ws);
+        }
+
+        return $contenido_table;
+    }
+
     protected function init_datatable(): stdClass
     {
         $columns["com_cliente_id"]["titulo"] = "Id";
@@ -142,6 +190,14 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
             exit;
         }
         $this->link_comisiones_generales_bd = $link;
+
+        $link = $this->obj_link->get_link(seccion: "com_cliente", accion: "asigna_empleado_bd");
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al recuperar link asigna_empleado_bd', data: $link);
+            print_r($error);
+            exit;
+        }
+        $this->link_asigna_empleado_bd = $link;
 
         return $link;
     }
