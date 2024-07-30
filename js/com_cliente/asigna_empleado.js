@@ -1,0 +1,1 @@
+$('#ks_cliente_empleado').DataTable();

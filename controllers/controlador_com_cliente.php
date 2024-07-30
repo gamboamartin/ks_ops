@@ -60,7 +60,7 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
     {
         $keys = new stdClass();
         $keys->inputs = array('codigo', 'razon_social', 'rfc', 'numero_exterior', 'numero_interior',
-            'cp', 'colonia', 'calle', 'nombre', 'ap', 'am', 'porcentaje');
+            'cp', 'colonia', 'calle', 'nombre', 'ap', 'am', 'porcentaje', 'nss', 'curp');
         $keys->telefonos = array('telefono');
         $keys->emails = array('correo');
         $keys->fechas = array('fecha_inicio', 'fecha_fin');
@@ -83,6 +83,8 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         $init_data['cat_sat_tipo_persona'] = "gamboamartin\\cat_sat";
         $init_data['com_agente'] = "gamboamartin\\comercial";
         $init_data['com_tipo_contacto'] = "gamboamartin\\comercial";
+        $init_data['org_puesto'] = "gamboamartin\\organigrama";
+        $init_data['em_registro_patronal'] = "gamboamartin\\empleado";
         $campos_view = $this->campos_view_base(init_data: $init_data, keys: $keys);
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al inicializar campo view', data: $campos_view);
@@ -105,6 +107,51 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         if (errores::$error) {
             return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
                 ws: $ws);
+        }
+
+        $this->row_upd->telefono = '';
+        $this->row_upd->rfc = '';
+
+        $keys_selects = (new init())->key_select_txt(cols: 6, key: 'nombre', keys_selects: $keys_selects,
+            place_holder: 'Nombre');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new init())->key_select_txt(cols: 6, key: 'ap', keys_selects: $keys_selects,
+            place_holder: 'Apellido Paterno');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new init())->key_select_txt(cols: 6, key: 'am', keys_selects: $keys_selects,
+            place_holder: 'Apellido Materno');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new init())->key_select_txt(cols: 6, key: 'telefono', keys_selects: $keys_selects,
+            place_holder: 'Teléfono');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new init())->key_select_txt(cols: 4, key: 'rfc', keys_selects: $keys_selects,
+            place_holder: 'RFC');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new init())->key_select_txt(cols: 4, key: 'nss', keys_selects: $keys_selects,
+            place_holder: 'NSS');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new init())->key_select_txt(cols: 4, key: 'curp', keys_selects: $keys_selects,
+            place_holder: 'Curp');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
         }
 
         $base = $this->base_upd(keys_selects: $keys_selects, params: array(), params_ajustados: array());
@@ -200,6 +247,148 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         $this->link_asigna_empleado_bd = $link;
 
         return $link;
+    }
+
+    public function init_selects_inputs(): array
+    {
+
+        $keys_selects = $this->init_selects(keys_selects: array(), key: "com_tipo_cliente_id", label: "Tipo de Cliente",
+            cols: 12);
+
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al integrar selector', data: $keys_selects);
+        }
+
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "dp_cp_id", label: "CP",
+            cols: 6,con_registros: false);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al integrar selector', data: $keys_selects);
+        }
+
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "dp_colonia_postal_id", label: "Colonia",
+            cols: 6,con_registros: false);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al integrar selector', data: $keys_selects);
+        }
+
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "dp_calle_pertenece_id", label: "Calle",
+            cols: 6,con_registros: false);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al integrar selector', data: $keys_selects);
+        }
+
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "org_puesto_id", label: "Puesto",
+            cols: 6);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al integrar selector', data: $keys_selects);
+        }
+
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "em_registro_patronal_id", label: "Registro Patronal",
+            cols: 6);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al integrar selector', data: $keys_selects);
+        }
+
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "com_agente_id", label: "Agente",
+            cols: 12);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al integrar selector', data: $keys_selects);
+        }
+
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "com_tipo_contacto_id", label: "Tipo de Contacto",
+            cols: 12);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al integrar selector', data: $keys_selects);
+        }
+
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "cat_sat_regimen_fiscal_id",
+            label: "Régimen Fiscal", cols: 12);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al integrar selector', data: $keys_selects);
+        }
+
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "cat_sat_tipo_persona_id",
+            label: "Tipo Persona", cols: 12);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al integrar selector', data: $keys_selects);
+        }
+
+        $keys_selects['cat_sat_regimen_fiscal_id']->columns_descripcion_select = array(
+            'cat_sat_regimen_fiscal_codigo', 'cat_sat_regimen_fiscal_descripcion');
+
+
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "dp_pais_id", label: "País");
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al integrar selector', data: $keys_selects);
+        }
+
+        $keys_selects['dp_pais_id']->key_descripcion_select = 'dp_pais_descripcion';
+
+
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "dp_estado_id", label: "Estado",
+            con_registros: false);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al integrar selector', data: $keys_selects);
+        }
+
+        $keys_selects['dp_estado_id']->key_descripcion_select = 'dp_estado_descripcion';
+
+
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "dp_municipio_id", label: "Municipio",
+            con_registros: false);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al integrar selector', data: $keys_selects);
+        }
+
+        $keys_selects['dp_municipio_id']->key_descripcion_select = 'dp_municipio_descripcion';
+
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "cat_sat_uso_cfdi_id", label: "Uso CFDI",
+            cols: 12);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al integrar selector', data: $keys_selects);
+        }
+
+        $keys_selects['cat_sat_uso_cfdi_id']->columns_ds = array(
+            'cat_sat_uso_cfdi_codigo', 'cat_sat_uso_cfdi_descripcion');
+
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "cat_sat_metodo_pago_id",
+            label: "Método de Pago");
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al integrar selector', data: $keys_selects);
+        }
+
+        $keys_selects['cat_sat_metodo_pago_id']->columns_ds = array(
+            'cat_sat_metodo_pago_codigo', 'cat_sat_metodo_pago_descripcion');
+
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "cat_sat_forma_pago_id",
+            label: "Forma Pago");
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al integrar selector', data: $keys_selects);
+        }
+
+        $keys_selects['cat_sat_forma_pago_id']->columns_ds = array(
+            'cat_sat_forma_pago_codigo', 'cat_sat_forma_pago_descripcion');
+
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "cat_sat_tipo_de_comprobante_id",
+            label: "Tipo de Comprobante");
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al integrar selector', data: $keys_selects);
+        }
+
+        $keys_selects['cat_sat_tipo_de_comprobante_id']->columns_ds = array(
+            'cat_sat_tipo_de_comprobante_codigo', 'cat_sat_tipo_de_comprobante_descripcion');
+
+
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "cat_sat_moneda_id",
+            label: "Moneda");
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al integrar selector', data: $keys_selects);
+        }
+
+        $keys_selects['cat_sat_moneda_id']->columns_ds = array(
+            'cat_sat_moneda_codigo', 'cat_sat_moneda_descripcion');
+
+        return $keys_selects;
     }
 
     protected function data_form(): array|stdClass
