@@ -14,6 +14,8 @@ use gamboamartin\direccion_postal\controllers\_init_dps;
 use gamboamartin\errores\errores;
 use base\controller\init;
 use gamboamartin\ks_ops\models\com_cliente;
+use gamboamartin\ks_ops\models\em_empleado;
+use gamboamartin\ks_ops\models\ks_cliente_empleado;
 use gamboamartin\ks_ops\models\ks_comision_general;
 use gamboamartin\system\actions;
 use gamboamartin\template_1\html;
@@ -159,7 +161,7 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
             return $this->retorno_error(mensaje: 'Error al integrar base', data: $base, header: $header, ws: $ws);
         }
 
-        $button =  $this->html->button_href(accion: 'modifica', etiqueta: 'Ir a Cliente',
+        $button = $this->html->button_href(accion: 'modifica', etiqueta: 'Ir a Cliente',
             registro_id: $this->registro_id, seccion: $this->tabla, style: 'warning', params: array());
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al generar link', data: $button);
@@ -168,7 +170,7 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         $this->button_com_cliente_modifica = $button;
 
         $data_view = new stdClass();
-        $data_view->names = array('Id', 'Empleado', 'RFC', 'NSS', 'Puesto','Acciones');
+        $data_view->names = array('Id', 'Empleado', 'RFC', 'NSS', 'Puesto', 'Acciones');
         $data_view->keys_data = array('ks_cliente_empleado_id', 'em_empleado_nombre', 'em_empleado_rfc', 'em_empleado_nss',
             'org_puesto_descripcion');
         $data_view->key_actions = 'acciones';
@@ -183,6 +185,57 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         }
 
         return $contenido_table;
+    }
+
+    public function asigna_empleado_bd(bool $header, bool $ws = false): array|stdClass
+    {
+        $this->link->beginTransaction();
+
+        $siguiente_view = (new actions())->init_alta_bd();
+        if (errores::$error) {
+            $this->link->rollBack();
+            return $this->retorno_error(mensaje: 'Error al obtener siguiente view', data: $siguiente_view,
+                header: $header, ws: $ws);
+        }
+
+        if (isset($_POST['btn_action_next'])) {
+            unset($_POST['btn_action_next']);
+        }
+
+        $em_empleado = new em_empleado($this->link);
+        $em_empleado->registro = $_POST;
+        $proceso = $em_empleado->alta_bd();
+        if (errores::$error) {
+            $this->link->rollBack();
+            return $this->retorno_error(mensaje: 'Error al dar de alta empleado', data: $proceso, header: $header,
+                ws: $ws);
+        }
+
+        $registro['com_cliente_id'] = $this->registro_id;
+        $registro['em_empleado_id'] = $proceso->registro_id;
+        $ks_cliente_empleado = new ks_cliente_empleado($this->link);
+        $ks_cliente_empleado->registro = $registro;
+        $proceso = $ks_cliente_empleado->alta_bd();
+        if (errores::$error) {
+            $this->link->rollBack();
+            return $this->retorno_error(mensaje: 'Error al dar de alta cliente empleado', data: $proceso, header: $header,
+                ws: $ws);
+        }
+
+        $this->link->commit();
+
+        if ($header) {
+            $this->retorno_base(registro_id: $this->registro_id, result: $proceso,
+                siguiente_view: "asigna_empleado", ws: $ws);
+        }
+        if ($ws) {
+            header('Content-Type: application/json');
+            echo json_encode($proceso, JSON_THROW_ON_ERROR);
+            exit;
+        }
+        $proceso->siguiente_view = "asigna_empleado";
+
+        return $proceso;
     }
 
     protected function init_datatable(): stdClass
@@ -260,19 +313,19 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         }
 
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "dp_cp_id", label: "CP",
-            cols: 6,con_registros: false);
+            cols: 6, con_registros: false);
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al integrar selector', data: $keys_selects);
         }
 
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "dp_colonia_postal_id", label: "Colonia",
-            cols: 6,con_registros: false);
+            cols: 6, con_registros: false);
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al integrar selector', data: $keys_selects);
         }
 
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "dp_calle_pertenece_id", label: "Calle",
-            cols: 6,con_registros: false);
+            cols: 6, con_registros: false);
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al integrar selector', data: $keys_selects);
         }
@@ -499,7 +552,7 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
             return $this->retorno_error(mensaje: 'Error al integrar base', data: $base, header: $header, ws: $ws);
         }
 
-        $button =  $this->html->button_href(accion: 'modifica', etiqueta: 'Ir a Cliente',
+        $button = $this->html->button_href(accion: 'modifica', etiqueta: 'Ir a Cliente',
             registro_id: $this->registro_id, seccion: $this->tabla, style: 'warning', params: array());
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al generar link', data: $button);
