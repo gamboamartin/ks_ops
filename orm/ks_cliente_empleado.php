@@ -13,12 +13,15 @@ class ks_cliente_empleado extends _modelo_parent
     public function __construct(PDO $link, array $childrens = array())
     {
         $tabla = 'ks_cliente_empleado';
-        $columnas = array($tabla => false, 'em_empleado' => $tabla, 'com_cliente' => $tabla);
+        $columnas = array($tabla => false, 'em_empleado' => $tabla, 'com_cliente' => $tabla, 'org_puesto' => 'em_empleado');
 
         $campos_obligatorios = array('em_empleado_id', 'com_cliente_id');
 
+        $columnas_extra['em_empleado_nombre_completo'] = 'CONCAT (IFNULL(em_empleado.nombre,"")," ",IFNULL(em_empleado.ap, "")," ",IFNULL(em_empleado.am,""))';
+
+
         parent::__construct(link: $link, tabla: $tabla, campos_obligatorios: $campos_obligatorios,
-            columnas: $columnas, childrens: $childrens);
+            columnas: $columnas, columnas_extra: $columnas_extra, childrens: $childrens);
 
         $this->NAMESPACE = __NAMESPACE__;
 
@@ -47,7 +50,7 @@ class ks_cliente_empleado extends _modelo_parent
             return $this->error->error(mensaje: 'Error generar codigo', data: $registros);
         }
 
-        $registros['descripcion'] = $registros['codigo'] . '-' . $registros['em_empleado_id'] . '-' . $registros['com_cliente'];
+        $registros['descripcion'] = $registros['codigo'] . '-' . $registros['em_empleado_id'] . '-' . $registros['com_cliente_id'];
 
         return $registros;
     }

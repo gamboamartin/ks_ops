@@ -171,7 +171,7 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
 
         $data_view = new stdClass();
         $data_view->names = array('Id', 'Empleado', 'RFC', 'NSS', 'Puesto', 'Acciones');
-        $data_view->keys_data = array('ks_cliente_empleado_id', 'em_empleado_nombre', 'em_empleado_rfc', 'em_empleado_nss',
+        $data_view->keys_data = array('ks_cliente_empleado_id', 'em_empleado_nombre_completo', 'em_empleado_rfc', 'em_empleado_nss',
             'org_puesto_descripcion');
         $data_view->key_actions = 'acciones';
         $data_view->namespace_model = 'gamboamartin\\ks_ops\\models';
