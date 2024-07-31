@@ -2,6 +2,7 @@
 <?php use config\views; ?>
 <?php echo $controlador->inputs->com_tipo_cliente_id; ?>
 <?php echo $controlador->inputs->cat_sat_actividad_economica_id; ?>
+<?php echo $controlador->inputs->cat_sat_periodicidad_id; ?>
 <?php echo $controlador->inputs->codigo; ?>
 <?php echo $controlador->inputs->razon_social; ?>
 <?php echo $controlador->inputs->com_cliente_rfc; ?>

@@ -10,9 +10,11 @@
 namespace gamboamartin\ks_ops\controllers;
 
 use DateTime;
+use gamboamartin\cat_sat\models\cat_sat_periodicidad;
 use gamboamartin\direccion_postal\controllers\_init_dps;
 use gamboamartin\errores\errores;
 use base\controller\init;
+use gamboamartin\ks_ops\html\selec_html;
 use gamboamartin\ks_ops\models\com_cliente;
 use gamboamartin\ks_ops\models\em_empleado;
 use gamboamartin\ks_ops\models\ks_cliente_empleado;
@@ -20,6 +22,7 @@ use gamboamartin\ks_ops\models\ks_comision_general;
 use gamboamartin\system\actions;
 use gamboamartin\template_1\html;
 use html\cat_sat_actividad_economica_html;
+use html\cat_sat_periodicidad_html;
 use html\com_cliente_html;
 use PDO;
 use stdClass;
@@ -76,6 +79,7 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         $init_data['dp_colonia_postal'] = "gamboamartin\\direccion_postal";
         $init_data['dp_calle_pertenece'] = "gamboamartin\\direccion_postal";
         $init_data['cat_sat_regimen_fiscal'] = "gamboamartin\\cat_sat";
+        $init_data['cat_sat_periodicidad'] = "gamboamartin\\cat_sat";
         $init_data['cat_sat_moneda'] = "gamboamartin\\cat_sat";
         $init_data['cat_sat_forma_pago'] = "gamboamartin\\cat_sat";
         $init_data['cat_sat_metodo_pago'] = "gamboamartin\\cat_sat";
@@ -360,6 +364,12 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
             return $this->errores->error(mensaje: 'Error al integrar selector', data: $keys_selects);
         }
 
+        $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "cat_sat_periodicidad_id",
+            label: "Periodicidad", cols: 12);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al integrar selector', data: $keys_selects);
+        }
+
         $keys_selects = $this->init_selects(keys_selects: $keys_selects, key: "cat_sat_tipo_persona_id",
             label: "Tipo Persona", cols: 12);
         if (errores::$error) {
@@ -636,7 +646,6 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
                 data: $com_cliente);
         }
 
-
         $cat_sat_actividad_economica_id = (
         new cat_sat_actividad_economica_html(html: $this->html_base))->select_cat_sat_actividad_economica_id(
                 cols: 12, con_registros: true, id_selected: $com_cliente->cat_sat_actividad_economica_id,
@@ -646,7 +655,17 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
                 data: $cat_sat_actividad_economica_id);
         }
 
+        $cat_sat_periodicidad_id = (
+        new selec_html(html: $this->html_base))->select_cat_sat_periodicidad_id(
+                cols: 12, con_registros: true, id_selected: /*$com_cliente->cat_sat_periodicidad_id*/-1,
+                link: $this->link);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al obtener cat_sat_periodicidad_id',
+                data: $cat_sat_actividad_economica_id);
+        }
+
         $this->inputs->cat_sat_actividad_economica_id = $cat_sat_actividad_economica_id;
+        $this->inputs->cat_sat_periodicidad_id = $cat_sat_periodicidad_id;
 
         return $r_modifica_bd;
 
