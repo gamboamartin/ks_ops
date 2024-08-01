@@ -20,9 +20,9 @@ class com_cliente extends \gamboamartin\comercial\models\com_cliente {
         $this->extension_estructura['cat_sat_actividad_economica']['enlace'] = 'ks_cliente';
         $this->extension_estructura['cat_sat_actividad_economica']['key_enlace'] = 'cat_sat_actividad_economica_id';
 
-       /* $this->extension_estructura['cat_sat_periodicidad']['key'] = 'id';
+        $this->extension_estructura['cat_sat_periodicidad']['key'] = 'id';
         $this->extension_estructura['cat_sat_periodicidad']['enlace'] = 'ks_cliente';
-        $this->extension_estructura['cat_sat_periodicidad']['key_enlace'] = 'cat_sat_periodicidad_id';*/
+        $this->extension_estructura['cat_sat_periodicidad']['key_enlace'] = 'cat_sat_periodicidad_id';
     }
 
     final public function alta_bd(array $keys_integra_ds = array('codigo', 'descripcion')): array|stdClass
