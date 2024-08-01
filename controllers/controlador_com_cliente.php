@@ -657,7 +657,7 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
 
         $cat_sat_periodicidad_id = (
         new selec_html(html: $this->html_base))->select_cat_sat_periodicidad_id(
-                cols: 12, con_registros: true, id_selected: /*$com_cliente->cat_sat_periodicidad_id*/-1,
+                cols: 12, con_registros: true, id_selected: $com_cliente->cat_sat_periodicidad_id,
                 link: $this->link);
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al obtener cat_sat_periodicidad_id',
