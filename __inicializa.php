@@ -87,6 +87,18 @@ if(errores::$error){
     exit;
 }
 
+$organigrama = new \gamboamartin\organigrama\instalacion\instalacion();
+
+$instala = $organigrama->instala(link: $link);
+if(errores::$error){
+    if($link->inTransaction()) {
+        $link->rollBack();
+    }
+    $error = (new errores())->error(mensaje: 'Error al instalar organigrama', data: $instala);
+    print_r($error);
+    exit;
+}
+
 
 $comercial = new gamboamartin\comercial\instalacion\instalacion();
 
@@ -101,6 +113,17 @@ if(errores::$error){
 }
 
 
+$facturacion = new \gamboamartin\facturacion\instalacion\instalacion();
+
+$instala = $organigrama->instala(link: $link);
+if(errores::$error){
+    if($link->inTransaction()) {
+        $link->rollBack();
+    }
+    $error = (new errores())->error(mensaje: 'Error al instalar facturacion', data: $instala);
+    print_r($error);
+    exit;
+}
 
 $ks_ops = new instalacion();
 
