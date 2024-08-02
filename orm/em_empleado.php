@@ -73,6 +73,44 @@ class em_empleado extends \gamboamartin\empleado\models\em_empleado {
         return $ks_empleado_ins;
     }
 
+    final public function modifica_bd(array $registro, int $id, bool $reactiva = false,
+                                      array $keys_integra_ds = array('codigo', 'descripcion')): array|stdClass
+    {
+        $registro_original = $registro;
+        $r_modifica = parent::modifica_bd(registro: $registro, id: $id, reactiva: $reactiva,
+            keys_integra_ds: $keys_integra_ds);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al modificar cliente',data:  $r_modifica);
+        }
+
+        $modifica_ks_empleado = $this->modifica_ks_empelado(em_empleado_id: $id, registros: $registro_original);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al modificar ks_empleado',data:  $modifica_ks_empleado);
+        }
+
+        return $r_modifica;
+
+    }
+
+    public function modifica_ks_empelado(int $em_empleado_id, array $registros)
+    {
+        $ks_empleado = (new ks_empleado(link: $this->link))->filtro_and(filtro: array('em_empleado_id' => $em_empleado_id));
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener registro ks_empleado',data: $ks_empleado);
+        }
+
+        $ks_empleado = $ks_empleado->registros[0];
+
+        $modifica['registro_patronal'] = $registros['registro_patronal'];
+        $ks_empleado_modifica = (new ks_empleado(link: $this->link))->modifica_bd(registro: $modifica, id: $ks_empleado['ks_empleado_id']);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al insertar ks_cliente',data:  $ks_empleado_modifica);
+        }
+
+        return $ks_empleado_modifica;
+    }
+
+
     public function transacciona_em_rel_empleado_sucursal(array $data, int $em_empleado_id): array|stdClass {
         return array();
     }

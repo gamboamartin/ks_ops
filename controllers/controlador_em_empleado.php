@@ -110,4 +110,34 @@ final class controlador_em_empleado extends \gamboamartin\empleado\controllers\c
         return $contenido_table;
     }
 
+    final public function modifica(bool $header, bool $ws = false): array|stdClass
+    {
+        $r_modifica_bd = parent::modifica(header: $header, ws: $ws);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al obtener template', data: $r_modifica_bd);
+        }
+
+        $em_empleado = (new em_empleado(link: $this->link))->registro(registro_id: $this->registro_id, retorno_obj: true);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al obtener com_cliente',
+                data: $em_empleado);
+        }
+
+        $this->row_upd->registro_patronal = $em_empleado->ks_empleado_registro_patronal;
+
+        $keys_selects = $this->init_selects_inputs();
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
+                ws: $ws);
+        }
+
+        $base = $this->base_upd(keys_selects: $keys_selects, params: array(), params_ajustados: array());
+        if (errores::$error) {
+            return $this->retorno_error(mensaje: 'Error al integrar base', data: $base, header: $header, ws: $ws);
+        }
+
+        return $r_modifica_bd;
+
+    }
+
 }
