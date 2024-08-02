@@ -8,6 +8,7 @@
  */
 namespace gamboamartin\ks_ops\controllers;
 
+use gamboamartin\errores\errores;
 use gamboamartin\ks_ops\models\em_empleado;
 use gamboamartin\template_1\html;
 use PDO;
@@ -37,7 +38,6 @@ final class controlador_em_empleado extends \gamboamartin\empleado\controllers\c
     {
         $keys_selects = parent::key_selects_txt($keys_selects);
         $keys_selects['nombre']->cols = 4;
-        $keys_selects['descripcion']->cols = 8;
         $keys_selects['ap']->cols = 4;
         $keys_selects['am']->cols = 4;
         $keys_selects['rfc']->cols = 4;
@@ -45,6 +45,27 @@ final class controlador_em_empleado extends \gamboamartin\empleado\controllers\c
         $keys_selects['nss']->cols = 4;
 
         return $keys_selects;
+    }
+
+    public function cuenta_bancaria(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
+    {
+        $seccion = "em_cuenta_bancaria";
+
+        $data_view = new stdClass();
+        $data_view->names = array('Id', 'Banco Sucursal', 'Descripción', 'Acciones');
+        $data_view->keys_data = array($seccion . "_id", 'bn_sucursal_descripcion', $seccion . '_descripcion');
+        $data_view->key_actions = 'acciones';
+        $data_view->namespace_model = 'gamboamartin\\empleado\\models';
+        $data_view->name_model_children = $seccion;
+
+        $contenido_table = $this->contenido_children(data_view: $data_view, next_accion: __FUNCTION__,
+            not_actions: $not_actions);
+        if (errores::$error) {
+            return $this->retorno_error(
+                mensaje: 'Error al obtener tbody', data: $contenido_table, header: $header, ws: $ws);
+        }
+
+        return $contenido_table;
     }
 
 }
