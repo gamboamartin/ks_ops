@@ -26,9 +26,9 @@ class controlador_ks_clienteTest extends test {
         parent::__construct($name);
         $this->errores = new errores();
         $this->paths_conf = new stdClass();
-        $this->paths_conf->generales = '/var/www/html/organigrama/config/generales.php';
-        $this->paths_conf->database = '/var/www/html/organigrama/config/database.php';
-        $this->paths_conf->views = '/var/www/html/organigrama/config/views.php';
+        $this->paths_conf->generales = '/var/www/html/ks_ops/config/generales.php';
+        $this->paths_conf->database = '/var/www/html/ks_ops/config/database.php';
+        $this->paths_conf->views = '/var/www/html/ks_ops/config/views.php';
     }
 
     public function test_init_configuraciones(): void

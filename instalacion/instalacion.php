@@ -25,6 +25,8 @@ class instalacion
         $foraneas = array();
         $foraneas['com_cliente_id'] = new stdClass();
         $foraneas['cat_sat_actividad_economica_id'] = new stdClass();
+        $foraneas['cat_sat_periodicidad_id'] = new stdClass();
+        $foraneas['cat_sat_periodicidad_id']->default = 99;
 
         $result = $init->foraneas(foraneas: $foraneas,table:  'ks_cliente');
 
