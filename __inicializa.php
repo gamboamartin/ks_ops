@@ -115,7 +115,7 @@ if(errores::$error){
 
 $facturacion = new \gamboamartin\facturacion\instalacion\instalacion();
 
-$instala = $organigrama->instala(link: $link);
+$instala = $facturacion->instala(link: $link);
 if(errores::$error){
     if($link->inTransaction()) {
         $link->rollBack();
@@ -124,6 +124,19 @@ if(errores::$error){
     print_r($error);
     exit;
 }
+
+$empleado = new \gamboamartin\empleado\instalacion\instalacion();
+
+$instala = $empleado->instala(link: $link);
+if(errores::$error){
+    if($link->inTransaction()) {
+        $link->rollBack();
+    }
+    $error = (new errores())->error(mensaje: 'Error al instalar $empleado', data: $instala);
+    print_r($error);
+    exit;
+}
+
 
 $ks_ops = new instalacion();
 
