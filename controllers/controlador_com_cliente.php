@@ -131,7 +131,7 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         }
 
         $keys_selects = (new init())->key_select_txt(cols: 4, key: 'am', keys_selects: $keys_selects,
-            place_holder: 'Apellido Materno');
+            place_holder: 'Apellido Materno',required: false);
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
         }
