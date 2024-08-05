@@ -8,6 +8,7 @@
  */
 namespace gamboamartin\ks_ops\controllers;
 
+use gamboamartin\direccion_postal\models\dp_municipio;
 use gamboamartin\errores\errores;
 use gamboamartin\ks_ops\models\em_empleado;
 use gamboamartin\template_1\html;
@@ -30,7 +31,7 @@ final class controlador_em_empleado extends \gamboamartin\empleado\controllers\c
         $keys = new stdClass();
         $keys->inputs = array('codigo', 'descripcion', 'nombre', 'ap', 'am',  'rfc', 'curp', 'nss', 'salario_diario',
             'salario_diario_integrado','com_sucursal','org_sucursal', 'salario_total', 'numero_exterior', 'numero_interior',
-            'registro_patronal');
+            'registro_patronal', 'cp', 'colonia', 'calle');
         $keys->telefonos = array('telefono');
         $keys->fechas = array('fecha_inicio_rel_laboral', 'fecha_inicio', 'fecha_final');
         $keys->emails = array('correo');
@@ -130,6 +131,23 @@ final class controlador_em_empleado extends \gamboamartin\empleado\controllers\c
             return $this->retorno_error(mensaje: 'Error al inicializar selects', data: $keys_selects, header: $header,
                 ws: $ws);
         }
+
+        $dp_municipio = (new dp_municipio($this->link))->get_municipio($this->registro['em_empleado_dp_municipio_id']);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al obtener dp_municipio', data: $dp_municipio);
+        }
+
+        $keys_selects['dp_pais_id']->id_selected = $dp_municipio['dp_pais_id'];
+
+        $keys_selects['dp_estado_id']->con_registros = true;
+        $keys_selects['dp_estado_id']->filtro = array("dp_pais.id" => $dp_municipio['dp_pais_id']);
+        $keys_selects['dp_estado_id']->id_selected = $dp_municipio['dp_estado_id'];
+
+        $keys_selects['dp_municipio_id']->con_registros = true;
+        $keys_selects['dp_municipio_id']->filtro = array("dp_estado.id" => $dp_municipio['dp_estado_id']);
+        $keys_selects['dp_municipio_id']->id_selected = $dp_municipio['dp_municipio_id'];
+
+        $keys_selects['cat_sat_regimen_fiscal_id']->id_selected = $this->registro['cat_sat_regimen_fiscal_id'];
 
         $base = $this->base_upd(keys_selects: $keys_selects, params: array(), params_ajustados: array());
         if (errores::$error) {
