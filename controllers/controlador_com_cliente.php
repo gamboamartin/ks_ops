@@ -65,7 +65,7 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
     {
         $keys = new stdClass();
         $keys->inputs = array('codigo', 'razon_social', 'rfc', 'numero_exterior', 'numero_interior',
-            'cp', 'colonia', 'calle', 'nombre', 'ap', 'am', 'porcentaje', 'nss', 'curp');
+            'cp', 'colonia', 'calle', 'nombre', 'ap', 'am', 'porcentaje', 'nss', 'curp', 'registro_patronal');
         $keys->telefonos = array('telefono');
         $keys->emails = array('correo');
         $keys->fechas = array('fecha_inicio', 'fecha_fin');
@@ -118,20 +118,26 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         $this->row_upd->telefono = '';
         $this->row_upd->rfc = '';
 
-        $keys_selects = (new init())->key_select_txt(cols: 6, key: 'nombre', keys_selects: $keys_selects,
+        $keys_selects = (new init())->key_select_txt(cols: 4, key: 'nombre', keys_selects: $keys_selects,
             place_holder: 'Nombre');
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
         }
 
-        $keys_selects = (new init())->key_select_txt(cols: 6, key: 'ap', keys_selects: $keys_selects,
+        $keys_selects = (new init())->key_select_txt(cols: 4, key: 'ap', keys_selects: $keys_selects,
             place_holder: 'Apellido Paterno');
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
         }
 
-        $keys_selects = (new init())->key_select_txt(cols: 6, key: 'am', keys_selects: $keys_selects,
+        $keys_selects = (new init())->key_select_txt(cols: 4, key: 'am', keys_selects: $keys_selects,
             place_holder: 'Apellido Materno');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new init())->key_select_txt(cols: 12, key: 'registro_patronal', keys_selects: $keys_selects,
+            place_holder: 'Registro Patronal');
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
         }
@@ -159,6 +165,12 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
         }
+
+        $this->row_upd->cp = "";
+        $this->row_upd->colonia = "";
+        $this->row_upd->calle = "";
+        $this->row_upd->numero_exterior = "";
+        $this->row_upd->numero_interior = "";
 
         $base = $this->base_upd(keys_selects: $keys_selects, params: array(), params_ajustados: array());
         if (errores::$error) {
