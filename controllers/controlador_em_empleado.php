@@ -52,7 +52,7 @@ final class controlador_em_empleado extends \gamboamartin\empleado\controllers\c
         $init_data['em_empleado'] = "gamboamartin\\empleado";
         $init_data['em_registro_patronal'] = "gamboamartin\\empleado";
         $init_data['com_sucursal'] = "gamboamartin\\comercial";
-
+        $init_data['com_cliente'] = "gamboamartin\\comercial";
 
         $campos_view = $this->campos_view_base(init_data: $init_data, keys: $keys);
         if (errores::$error) {
@@ -67,6 +67,12 @@ final class controlador_em_empleado extends \gamboamartin\empleado\controllers\c
         $keys_selects = parent::init_selects_inputs();
         $keys_selects['em_registro_patronal_id']->cols = 12;
         $keys_selects['cat_sat_regimen_fiscal_id']->cols = 12;
+
+        $keys_selects = $this->key_select(cols: 12, con_registros: true, filtro: array(), key: "com_cliente_id",
+            keys_selects: $keys_selects, id_selected: -1, label: "Cliente");
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
 
         return $keys_selects;
     }
