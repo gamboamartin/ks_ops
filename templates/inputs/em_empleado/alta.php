@@ -15,8 +15,8 @@
 <?php echo $controlador->inputs->numero_exterior; ?>
 <?php echo $controlador->inputs->numero_interior; ?>
 <?php echo $controlador->inputs->cat_sat_regimen_fiscal_id; ?>
-<?php echo $controlador->inputs->rfc; ?>
-<?php echo $controlador->inputs->nss; ?>
-<?php echo $controlador->inputs->curp; ?>
+<?php echo $controlador->inputs->em_empleado_rfc; ?>
+<?php echo $controlador->inputs->em_empleado_nss; ?>
+<?php echo $controlador->inputs->em_empleado_curp; ?>
 <?php include (new views())->ruta_templates.'botons/submit/alta_bd.php';?>
 
