@@ -125,6 +125,21 @@ if(errores::$error){
     exit;
 }
 
+$banco = new \gamboamartin\banco\instalacion\instalacion();
+
+$instala = $banco->instala(link: $link);
+if(errores::$error){
+    if($link->inTransaction()) {
+        $link->rollBack();
+    }
+    $error = (new errores())->error(mensaje: 'Error al instalar banco', data: $banco);
+    print_r($error);
+    exit;
+}
+
+
+$ks_ops = new instalacion();
+
 $empleado = new \gamboamartin\empleado\instalacion\instalacion();
 
 $instala = $empleado->instala(link: $link);

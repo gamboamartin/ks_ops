@@ -10,7 +10,6 @@
 namespace gamboamartin\ks_ops\controllers;
 
 use DateTime;
-use gamboamartin\cat_sat\models\cat_sat_periodicidad;
 use gamboamartin\direccion_postal\controllers\_init_dps;
 use gamboamartin\errores\errores;
 use base\controller\init;
@@ -22,7 +21,6 @@ use gamboamartin\ks_ops\models\ks_comision_general;
 use gamboamartin\system\actions;
 use gamboamartin\template_1\html;
 use html\cat_sat_actividad_economica_html;
-use html\cat_sat_periodicidad_html;
 use html\com_cliente_html;
 use PDO;
 use stdClass;
