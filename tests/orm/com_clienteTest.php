@@ -42,8 +42,10 @@ class com_clienteTest extends test {
         $_GET['registro_id'] = '1';
         $obj = new \gamboamartin\ks_ops\models\com_cliente(link: $this->link);
 
-        $registro_id = 1;
+        $registro_id = 10;
         $resultado = $obj->registro(registro_id: $registro_id,retorno_obj: true);
+
+
         $this->assertIsObject($resultado);
         $this->assertNotTrue(errores::$error);
         $this->assertEquals('activo',$resultado->ks_cliente_status);
