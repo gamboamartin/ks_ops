@@ -154,6 +154,7 @@ final class controlador_em_empleado extends \gamboamartin\empleado\controllers\c
         $keys_selects['dp_municipio_id']->id_selected = $dp_municipio['dp_municipio_id'];
 
         $keys_selects['cat_sat_regimen_fiscal_id']->id_selected = $this->registro['cat_sat_regimen_fiscal_id'];
+        $keys_selects['com_cliente_id']->id_selected = $em_empleado->ks_cliente_empleado_com_cliente_id;
 
         $base = $this->base_upd(keys_selects: $keys_selects, params: array(), params_ajustados: array());
         if (errores::$error) {

@@ -15,6 +15,10 @@ class em_empleado extends \gamboamartin\empleado\models\em_empleado {
         $this->extension_estructura['ks_empleado']['key'] = 'em_empleado_id';
         $this->extension_estructura['ks_empleado']['enlace'] = 'em_empleado';
         $this->extension_estructura['ks_empleado']['key_enlace'] = 'id';
+
+        $this->extension_estructura['ks_cliente_empleado']['key'] = 'em_empleado_id';
+        $this->extension_estructura['ks_cliente_empleado']['enlace'] = 'em_empleado';
+        $this->extension_estructura['ks_cliente_empleado']['key_enlace'] = 'id';
     }
 
     final public function alta_bd(array $keys_integra_ds = array('codigo', 'descripcion')): array|stdClass
