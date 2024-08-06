@@ -184,9 +184,8 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         $this->button_com_cliente_modifica = $button;
 
         $data_view = new stdClass();
-        $data_view->names = array('Id', 'Empleado', 'RFC', 'NSS', 'Puesto', 'Acciones');
-        $data_view->keys_data = array('ks_cliente_empleado_id', 'em_empleado_nombre_completo', 'em_empleado_rfc', 'em_empleado_nss',
-            'org_puesto_descripcion');
+        $data_view->names = array('Id', 'Empleado', 'RFC', 'NSS','Acciones');
+        $data_view->keys_data = array('ks_cliente_empleado_id', 'em_empleado_nombre_completo', 'em_empleado_rfc', 'em_empleado_nss');
         $data_view->key_actions = 'acciones';
         $data_view->namespace_model = 'gamboamartin\\ks_ops\\models';
         $data_view->name_model_children = 'ks_cliente_empleado';

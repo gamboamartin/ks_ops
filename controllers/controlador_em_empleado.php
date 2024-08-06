@@ -62,6 +62,24 @@ final class controlador_em_empleado extends \gamboamartin\empleado\controllers\c
         return $campos_view;
     }
 
+    protected function init_datatable(): stdClass
+    {
+        $columns["em_empleado_id"]["titulo"] = "Id";
+        $columns["em_empleado_nombre_completo"]["titulo"] = "Empleado";
+        $columns["em_empleado_rfc"]["titulo"] = "Rfc";
+        $columns["em_empleado_nss"]["titulo"] = "NSS";
+        $columns["em_empleado_n_cuentas_bancarias"]["titulo"] = "Cuentas Bancarias";
+
+        $filtro = array("em_empleado.id","em_empleado.nombre","em_empleado.ap","em_empleado.am","em_empleado.rfc",
+            "em_empleado_nombre_completo","em_empleado_nombre_completo_inv", "em_empleado.nss");
+
+        $datatables = new stdClass();
+        $datatables->columns = $columns;
+        $datatables->filtro = $filtro;
+
+        return $datatables;
+    }
+
     public function init_selects_inputs(): array
     {
         $keys_selects = parent::init_selects_inputs();
