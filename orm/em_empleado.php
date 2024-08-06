@@ -42,8 +42,30 @@ class em_empleado extends \gamboamartin\empleado\models\em_empleado {
             }
         }
 
+        $ks_cliente_empleado_alta = $this->alta_cliente_empleado(registros: $registro_original,
+            em_empleado_id: $alta_bd->registro_id);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al insertar ks_cliente_empleado',data:  $ks_cliente_empleado_alta);
+        }
+
         return $alta_bd;
     }
+
+    public function alta_cliente_empleado(array $registros, int $em_empleado_id)
+    {
+        $ks_cliente_empleado = (new ks_cliente_empleado(link: $this->link));
+        $ks_cliente_empleado->registro['em_empleado_id'] = $em_empleado_id;
+        $ks_cliente_empleado->registro['com_cliente_id'] = $registros['com_cliente_id'];
+
+        $operacion = $ks_cliente_empleado->alta_bd();
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al insertar cliente empleado',data:  $operacion);
+        }
+
+        return $operacion;
+    }
+
+
 
     public function valores_predeterminados() : array
     {
