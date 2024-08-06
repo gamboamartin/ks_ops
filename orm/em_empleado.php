@@ -69,8 +69,6 @@ class em_empleado extends \gamboamartin\empleado\models\em_empleado {
         return $operacion;
     }
 
-
-
     public function valores_predeterminados() : array
     {
         $this->registro['em_registro_patronal_id'] = (new em_registro_patronal(link: $this->link))->id_predeterminado();
@@ -114,8 +112,38 @@ class em_empleado extends \gamboamartin\empleado\models\em_empleado {
             return $this->error->error(mensaje: 'Error al modificar ks_empleado',data:  $modifica_ks_empleado);
         }
 
-        return $r_modifica;
+        $ks_cliente_empleado_alta = $this->modifica_cliente_empleado(registros: $registro_original,
+            em_empleado_id: $id);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al insertar ks_cliente_empleado',data:  $ks_cliente_empleado_alta);
+        }
 
+        return $r_modifica;
+    }
+
+    public function modifica_cliente_empleado(array $registros, int $em_empleado_id)
+    {
+        $ks_cliente_empleado = (new ks_cliente_empleado(link: $this->link));
+        $registro = $ks_cliente_empleado->filtro_and(filtro: array('em_empleado_id' => $em_empleado_id));
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al obtener registro ks_cliente_empleado',data: $registro);
+        }
+
+        if ($registro->n_registros == 0) {
+            return $this->error->error(mensaje: 'No se encontró registro ks_cliente_empleado',data: $registro);
+        }
+
+        $registro = $registro->registros[0];
+
+        $m_ks_cliente_empleado['em_empleado_id'] = $em_empleado_id;
+        $m_ks_cliente_empleado['com_cliente_id'] = $registros['com_cliente_id'];
+
+        $operacion = $ks_cliente_empleado->modifica_bd(registro: $m_ks_cliente_empleado, id: $registro['ks_cliente_empleado_id']);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al modificar cliente empleado',data:  $operacion);
+        }
+
+        return $operacion;
     }
 
     public function modifica_ks_empelado(int $em_empleado_id, array $registros)
