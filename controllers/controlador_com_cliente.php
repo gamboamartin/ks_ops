@@ -22,6 +22,7 @@ use gamboamartin\system\actions;
 use gamboamartin\template_1\html;
 use html\cat_sat_actividad_economica_html;
 use html\com_cliente_html;
+use html\em_empleado_html;
 use PDO;
 use stdClass;
 
@@ -113,9 +114,6 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
                 ws: $ws);
         }
 
-        $this->row_upd->telefono = '';
-        $this->row_upd->rfc = '';
-
         $keys_selects = (new init())->key_select_txt(cols: 4, key: 'nombre', keys_selects: $keys_selects,
             place_holder: 'Nombre');
         if (errores::$error) {
@@ -146,29 +144,36 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
             return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
         }
 
-        $keys_selects = (new init())->key_select_txt(cols: 4, key: 'rfc', keys_selects: $keys_selects,
-            place_holder: 'RFC');
+        $this->row_upd->rfc = '';
+
+        $em_empleado_rfc = (new em_empleado_html(html: $this->html_base))->input_rfc(cols: 6, row_upd: $this->row_upd,
+            value_vacio: false);
         if (errores::$error) {
-            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+            return $this->errores->error(mensaje: 'Error al maquetar input', data: $em_empleado_rfc);
         }
 
-        $keys_selects = (new init())->key_select_txt(cols: 4, key: 'nss', keys_selects: $keys_selects,
-            place_holder: 'NSS');
+        $em_empleado_curp = (new em_empleado_html(html: $this->html_base))->input_curp(cols: 12, row_upd: $this->row_upd,
+            value_vacio: false);
         if (errores::$error) {
-            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+            return $this->errores->error(mensaje: 'Error al maquetar input', data: $em_empleado_curp);
         }
 
-        $keys_selects = (new init())->key_select_txt(cols: 4, key: 'curp', keys_selects: $keys_selects,
-            place_holder: 'Curp');
+        $em_empleado_nss = (new em_empleado_html(html: $this->html_base))->input_nss(cols: 6, row_upd: $this->row_upd,
+            value_vacio: false);
         if (errores::$error) {
-            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+            return $this->errores->error(mensaje: 'Error al maquetar input', data: $em_empleado_nss);
         }
+
+        $this->inputs->em_empleado_rfc = $em_empleado_rfc;
+        $this->inputs->em_empleado_curp = $em_empleado_curp;
+        $this->inputs->em_empleado_nss = $em_empleado_nss;
 
         $this->row_upd->cp = "";
         $this->row_upd->colonia = "";
         $this->row_upd->calle = "";
         $this->row_upd->numero_exterior = "";
         $this->row_upd->numero_interior = "";
+        $this->row_upd->telefono = '';
 
         $base = $this->base_upd(keys_selects: $keys_selects, params: array(), params_ajustados: array());
         if (errores::$error) {
@@ -217,21 +222,11 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
 
         $em_empleado = new em_empleado($this->link);
         $em_empleado->registro = $_POST;
+        $em_empleado->registro['com_cliente_id'] = $this->registro_id;
         $proceso = $em_empleado->alta_bd();
         if (errores::$error) {
             $this->link->rollBack();
             return $this->retorno_error(mensaje: 'Error al dar de alta empleado', data: $proceso, header: $header,
-                ws: $ws);
-        }
-
-        $registro['com_cliente_id'] = $this->registro_id;
-        $registro['em_empleado_id'] = $proceso->registro_id;
-        $ks_cliente_empleado = new ks_cliente_empleado($this->link);
-        $ks_cliente_empleado->registro = $registro;
-        $proceso = $ks_cliente_empleado->alta_bd();
-        if (errores::$error) {
-            $this->link->rollBack();
-            return $this->retorno_error(mensaje: 'Error al dar de alta cliente empleado', data: $proceso, header: $header,
                 ws: $ws);
         }
 
