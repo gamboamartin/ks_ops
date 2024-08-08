@@ -119,9 +119,8 @@ final class controlador_em_empleado extends \gamboamartin\empleado\controllers\c
         $seccion = "em_cuenta_bancaria";
 
         $data_view = new stdClass();
-        $data_view->names = array('Id', 'Banco', 'Clabe','Descripción', 'Acciones');
-        $data_view->keys_data = array($seccion . "_id", 'bn_sucursal_descripcion', 'em_cuenta_bancaria_clabe',
-            'em_cuenta_bancaria_descripcion');
+        $data_view->names = array('Id', 'Banco', 'Clabe', 'Acciones');
+        $data_view->keys_data = array($seccion . "_id", 'bn_sucursal_descripcion', 'em_cuenta_bancaria_clabe');
         $data_view->key_actions = 'acciones';
         $data_view->namespace_model = 'gamboamartin\\empleado\\models';
         $data_view->name_model_children = $seccion;
