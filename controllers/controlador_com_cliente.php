@@ -18,6 +18,7 @@ use gamboamartin\ks_ops\models\com_cliente;
 use gamboamartin\ks_ops\models\em_empleado;
 use gamboamartin\ks_ops\models\ks_cliente_empleado;
 use gamboamartin\ks_ops\models\ks_comision_general;
+use gamboamartin\plugins\exportador;
 use gamboamartin\system\actions;
 use gamboamartin\template_1\html;
 use html\cat_sat_actividad_economica_html;
@@ -760,5 +761,56 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         return $r_modifica;
     }
 
+    public function reporte_empleados(bool $header, bool $ws = false): array|stdClass
+    {
+        $com_cliente = (new com_cliente($this->link))->registro(registro_id: $this->registro_id);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al obtener cliente', data: $com_cliente);
+        }
 
+
+        $filtro['com_cliente_id'] = $this->registro_id;
+        $ks_cliente_empleado = (new ks_cliente_empleado($this->link))->filtro_and(filtro: $filtro);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener empleado por cliente', data: $ks_cliente_empleado);
+            print_r($error);
+            die('Error');
+        }
+
+        $data1 = [
+            [$com_cliente['com_cliente_razon_social'], "-", "-", "16%", "ADMON. FONDO"]
+        ];
+
+        $tabla1['headers'] = ['CLIENTE', 'PERIODO', 'COMISION', 'IVA', 'ESQUEMA'];
+        $tabla1['orientation'] = "vertical";
+        $tabla1['data'] = $data1;
+        $tabla1['startRow'] = 2;
+        $tabla1['startColumn'] = "B";
+
+        $tabla2['headers'] = ['CLAVE EMPLEADO', 'NSS', 'RFC', 'CURP', 'NOMBRE COMPLETO', 'NETO A DEPOSITAR', 'BANCO',
+            'CUENTA', 'CLABE INTERBANCARIA', 'EMAIL'];
+        $tabla2['data'] = array();
+        $tabla2['startRow'] = 8;
+        $tabla2['startColumn'] = "A";
+        $tabla2['totales'] = [
+            ["columna" => 'F', 'valor' => 20]
+        ];
+
+        $data["ADMON. PENSION"] = [$tabla1, $tabla2];
+
+        $name = "REPORTE DE EMPLEADOS_";
+
+        $resultado = (new exportador())->exportar_template(header: $header, path_base: $this->path_base, name: $name, data: $data);
+        if (errores::$error) {
+            $error = $this->errores->error('Error al generar xls', $resultado);
+            if (!$header) {
+                return $error;
+            }
+            print_r($error);
+            die('Error');
+        }
+
+        header('Location:' . $this->link_lista);
+        exit;
+    }
 }
