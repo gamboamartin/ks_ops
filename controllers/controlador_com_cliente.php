@@ -16,7 +16,6 @@ use base\controller\init;
 use gamboamartin\ks_ops\html\selec_html;
 use gamboamartin\ks_ops\models\com_cliente;
 use gamboamartin\ks_ops\models\em_empleado;
-use gamboamartin\ks_ops\models\ks_cliente_empleado;
 use gamboamartin\ks_ops\models\ks_comision_general;
 use gamboamartin\system\actions;
 use gamboamartin\template_1\html;
