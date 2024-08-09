@@ -10,13 +10,16 @@
 namespace gamboamartin\ks_ops\controllers;
 
 use DateTime;
+use gamboamartin\banco\models\bn_sucursal;
 use gamboamartin\direccion_postal\controllers\_init_dps;
+use gamboamartin\empleado\models\em_cuenta_bancaria;
 use gamboamartin\errores\errores;
 use base\controller\init;
 use gamboamartin\ks_ops\html\selec_html;
 use gamboamartin\ks_ops\models\com_cliente;
 use gamboamartin\ks_ops\models\em_empleado;
 use gamboamartin\ks_ops\models\ks_comision_general;
+use gamboamartin\plugins\exportador;
 use gamboamartin\system\actions;
 use gamboamartin\template_1\html;
 use html\cat_sat_actividad_economica_html;
@@ -759,5 +762,99 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         return $r_modifica;
     }
 
+    public function reporte_empleados(bool $header, bool $ws = false): array|stdClass
+    {
+        $com_cliente = (new com_cliente($this->link))->registro(registro_id: $this->registro_id);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al obtener cliente', data: $com_cliente);
+        }
 
+
+        $filtro['com_cliente_id'] = $this->registro_id;
+        $ks_cliente_empleado = (new ks_cliente_empleado($this->link))->filtro_and(filtro: $filtro);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener empleado por cliente', data: $ks_cliente_empleado);
+            print_r($error);
+            die('Error');
+        }
+
+        $data1 = [
+            [$com_cliente['com_cliente_razon_social'], "-", "-", "16%", "ADMON. FONDO"]
+        ];
+
+        $data2 = array();
+
+        foreach ($ks_cliente_empleado->registros as $empleado) {
+            $filtro = array('em_empleado_id' => $empleado['em_empleado_id']);
+            $order = array('em_cuenta_bancaria_id' => 'DESC');
+            $em_cuenta_bancaria = (new em_cuenta_bancaria($this->link))->filtro_and(filtro: $filtro, order: $order);
+            if (errores::$error) {
+                $error = $this->errores->error(mensaje: 'Error al obtener cuenta bancaria', data: $em_cuenta_bancaria);
+                print_r($error);
+                die('Error');
+            }
+
+            $clabe = "-";
+            $sucursal = "-";
+
+            if ($em_cuenta_bancaria->n_registros > 0) {
+                $clabe = $em_cuenta_bancaria->registros[0]['em_cuenta_bancaria_clabe'];
+                $sucursal_id = $em_cuenta_bancaria->registros[0]['em_cuenta_bancaria_bn_sucursal_id'];
+
+                $bn_sucursal = (new bn_sucursal($this->link))->registro(registro_id: $sucursal_id);
+                if (errores::$error) {
+                    $error = $this->errores->error(mensaje: 'Error al obtener sucursal', data: $bn_sucursal);
+                    print_r($error);
+                    die('Error');
+                }
+
+                $sucursal = $bn_sucursal['bn_sucursal_descripcion'];
+            }
+
+            $data2[] = [
+                $empleado['em_empleado_codigo'],
+                $empleado['em_empleado_nss'],
+                $empleado['em_empleado_rfc'],
+                $empleado['em_empleado_curp'],
+                $empleado['em_empleado_nombre_completo'],
+                "-",
+                $sucursal,
+                "-",
+                $clabe,
+                $empleado['em_empleado_correo']
+            ];
+        }
+
+        $tabla1['headers'] = ['CLIENTE', 'PERIODO', 'COMISION', 'IVA', 'ESQUEMA'];
+        $tabla1['orientation'] = "vertical";
+        $tabla1['data'] = $data1;
+        $tabla1['startRow'] = 2;
+        $tabla1['startColumn'] = "B";
+
+        $tabla2['headers'] = ['CLAVE EMPLEADO', 'NSS', 'RFC', 'CURP', 'NOMBRE COMPLETO', 'NETO A DEPOSITAR', 'BANCO',
+            'CUENTA', 'CLABE INTERBANCARIA', 'EMAIL'];
+        $tabla2['data'] = $data2;
+        $tabla2['startRow'] = 8;
+        $tabla2['startColumn'] = "A";
+        $tabla2['totales'] = [
+            ["columna" => 'F', 'valor' => '-']
+        ];
+
+        $data["ADMON. PENSION"] = [$tabla1, $tabla2];
+
+        $name = "REPORTE DE EMPLEADOS_".$com_cliente['com_cliente_razon_social'];
+
+        $resultado = (new exportador())->exportar_template(header: $header, path_base: $this->path_base, name: $name, data: $data);
+        if (errores::$error) {
+            $error = $this->errores->error('Error al generar xls', $resultado);
+            if (!$header) {
+                return $error;
+            }
+            print_r($error);
+            die('Error');
+        }
+
+        header('Location:' . $this->link_lista);
+        exit;
+    }
 }
