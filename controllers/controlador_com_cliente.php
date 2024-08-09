@@ -818,7 +818,7 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
                 $empleado['em_empleado_rfc'],
                 $empleado['em_empleado_curp'],
                 $empleado['em_empleado_nombre_completo'],
-                "-",
+                "",
                 $sucursal,
                 "-",
                 $clabe,
