@@ -772,6 +772,7 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         }
 
         $filtro['com_cliente_id'] = $this->registro_id;
+        $filtro['em_empleado.status'] = 'activo';
         $ks_cliente_empleado = (new ks_cliente_empleado($this->link))->filtro_and(filtro: $filtro);
         if (errores::$error) {
             $error = $this->errores->error(mensaje: 'Error al obtener empleado por cliente', data: $ks_cliente_empleado);
