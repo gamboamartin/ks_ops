@@ -834,8 +834,8 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
 
         $sheet->setCellValue('C2', $com_cliente['com_cliente_razon_social']);
         $sheet->setCellValue('C3', '-');
-        $sheet->setCellValue('C4', '11,00%');
-        $sheet->setCellValue('C5', '16%');
+        $sheet->setCellValue('C4', '0.11');
+        $sheet->setCellValue('C5', '0.16');
         $sheet->setCellValue('C6', 'ADMON. FONDO');
 
         $sheet->mergeCells('C2:E2');
@@ -865,6 +865,9 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
             ],
         ]);
 
+        $sheet->getStyle('C4:C5')
+            ->getNumberFormat()->setFormatCode('0.00%');
+
         $sheet->getStyle('C2:E6')->applyFromArray([
             'font' => [
                 'bold' => true,
@@ -890,10 +893,6 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
             $sheet->getColumnDimension($columna)->setAutoSize(true);
             $columna++;
         }
-
-        $datos = [
-            1.00, 2.00, 3.00, 1.00, 2.00, 3.00, 1.00, 2.00, 3.00, 1.00
-        ];
 
         $fila = $fila_inicio + 1;
         $columna = $columna_inicio;
@@ -946,6 +945,12 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         $sheet->setCellValue('F' . ($ultimaFila + 6), '=F' . ($ultimaFila + 5) . '* C5');
         $sheet->setCellValue('F' . ($ultimaFila + 7), '=F' . ($ultimaFila + 5) . '+F' . ($ultimaFila + 6));
 
+        $sheet->getStyle('F' . ($ultimaFila + 1) . ':F' . ($ultimaFila + 1))->applyFromArray([
+            'font' => [
+                'bold' => true,
+            ],
+        ]);
+
         $sheet->getStyle('E' . ($ultimaFila + 2) . ':F' . ($ultimaFila + 7))->applyFromArray([
             'font' => [
                 'bold' => true,
@@ -953,6 +958,12 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
             'alignment' => [
                 'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
                 'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ],
+        ]);
+
+        $sheet->getStyle('F' . ($ultimaFila + 3) . ':F' . ($ultimaFila + 6))->applyFromArray([
+            'font' => [
+                'bold' => false,
             ],
         ]);
 
