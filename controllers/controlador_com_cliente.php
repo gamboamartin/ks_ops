@@ -27,6 +27,7 @@ use html\cat_sat_actividad_economica_html;
 use html\com_cliente_html;
 use html\em_empleado_html;
 use PDO;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use stdClass;
 
 final class controlador_com_cliente extends \gamboamartin\comercial\controllers\controlador_com_cliente
@@ -130,7 +131,7 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         }
 
         $keys_selects = (new init())->key_select_txt(cols: 4, key: 'am', keys_selects: $keys_selects,
-            place_holder: 'Apellido Materno',required: false);
+            place_holder: 'Apellido Materno', required: false);
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
         }
@@ -192,7 +193,7 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         $this->button_com_cliente_modifica = $button;
 
         $data_view = new stdClass();
-        $data_view->names = array('Id', 'Empleado', 'RFC', 'NSS','Acciones');
+        $data_view->names = array('Id', 'Empleado', 'RFC', 'NSS', 'Acciones');
         $data_view->keys_data = array('ks_cliente_empleado_id', 'em_empleado_nombre_completo', 'em_empleado_rfc', 'em_empleado_nss');
         $data_view->key_actions = 'acciones';
         $data_view->namespace_model = 'gamboamartin\\ks_ops\\models';
@@ -770,7 +771,6 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
             return $this->errores->error(mensaje: 'Error al obtener cliente', data: $com_cliente);
         }
 
-
         $filtro['com_cliente_id'] = $this->registro_id;
         $ks_cliente_empleado = (new ks_cliente_empleado($this->link))->filtro_and(filtro: $filtro);
         if (errores::$error) {
@@ -778,12 +778,6 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
             print_r($error);
             die('Error');
         }
-
-        $data1 = [
-            [$com_cliente['com_cliente_razon_social'], "-", "-", "16%", "ADMON. FONDO"]
-        ];
-
-        $data2 = array();
 
         foreach ($ks_cliente_empleado->registros as $empleado) {
             $filtro = array('em_empleado_id' => $empleado['em_empleado_id']);
@@ -826,28 +820,159 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
             ];
         }
 
-        $tabla1['headers'] = ['CLIENTE', 'PERIODO', 'COMISION', 'IVA', 'ESQUEMA'];
-        $tabla1['orientation'] = "vertical";
-        $tabla1['data'] = $data1;
-        $tabla1['startRow'] = 2;
-        $tabla1['startColumn'] = "B";
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('ADMON. PENSION');
 
-        $tabla2['headers'] = ['CLAVE EMPLEADO', 'NSS', 'RFC', 'CURP', 'NOMBRE COMPLETO', 'NETO A DEPOSITAR', 'BANCO',
-            'CUENTA', 'CLABE INTERBANCARIA', 'EMAIL'];
-        $tabla2['data'] = $data2;
-        $tabla2['startRow'] = 8;
-        $tabla2['startColumn'] = "A";
-        $tabla2['totales'] = [
-            ["columna" => 'F', 'valor' => '-']
+        $sheet->setCellValue('B2', 'CLIENTE');
+        $sheet->setCellValue('B3', 'PERIODO');
+        $sheet->setCellValue('B4', 'COMISION');
+        $sheet->setCellValue('B5', 'IVA');
+        $sheet->setCellValue('B6', 'ESQUEMA');
+
+        $sheet->setCellValue('C2', $com_cliente['com_cliente_razon_social']);
+        $sheet->setCellValue('C3', '-');
+        $sheet->setCellValue('C4', '11,00%');
+        $sheet->setCellValue('C5', '16%');
+        $sheet->setCellValue('C6', 'ADMON. FONDO');
+
+        $sheet->mergeCells('C2:E2');
+        $sheet->mergeCells('C3:E3');
+        $sheet->mergeCells('C4:E4');
+        $sheet->mergeCells('C5:E5');
+        $sheet->mergeCells('C6:E6');
+
+        $sheet->getStyle('B2:E6')->applyFromArray([
+            'font' => [
+                'bold' => true,
+                'color' => ['rgb' => 'FFFFFF'],
+            ],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['rgb' => '800000'],
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => ['rgb' => '000000'],
+                ],
+            ],
+        ]);
+
+        $sheet->getStyle('C2:E6')->applyFromArray([
+            'font' => [
+                'bold' => true,
+                'color' => ['rgb' => '000000'],
+            ],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['rgb' => 'F2DCDB'],
+            ]
+        ]);
+
+        $cabecera = [
+            'CLAVE EMPLEADO', 'NSS', 'RFC', 'CURP', 'NOMBRE COMPLETO', 'NETO A DEPOSITAR', 'BANCO', 'CUENTA',
+            'CLABE INTERBANCARIA', 'EMAIL'
         ];
 
-        $data["ADMON. PENSION"] = [$tabla1, $tabla2];
+        $columna_inicio = 'A';
+        $fila_inicio = 8;
+        $columna = $columna_inicio;
 
-        $name = "REPORTE DE EMPLEADOS_".$com_cliente['com_cliente_razon_social'];
+        foreach ($cabecera as $encabezado) {
+            $sheet->setCellValue($columna . $fila_inicio, $encabezado);
+            $sheet->getColumnDimension($columna)->setAutoSize(true);
+            $columna++;
+        }
 
-        $resultado = (new exportador())->exportar_template(header: $header, path_base: $this->path_base, name: $name, data: $data);
-        if (errores::$error) {
-            $error = $this->errores->error('Error al generar xls', $resultado);
+        $sheet->getStyle("A8:J8")->applyFromArray([
+            'font' => [
+                'bold' => true,
+                'color' => ['rgb' => 'FFFFFF'],
+            ],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['rgb' => '800000'],
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => ['rgb' => '000000'],
+                ],
+            ],
+        ]);
+
+        $datos = [
+            1.00, 2.00, 3.00
+        ];
+
+        $fila = $fila_inicio + 1;
+        foreach ($datos as $valor) {
+            $sheet->setCellValue('F' . $fila, $valor);
+            $fila++;
+        }
+
+        $ultimaFila = $fila - 1;
+
+        $sheet->setCellValue('F' . ($ultimaFila + 1), '=SUM(F' . ($fila_inicio + 1) . ':F' . $ultimaFila . ')');
+
+        $sheet->setCellValue('E' . ($ultimaFila + 3), 'NÓMINA');
+        $sheet->setCellValue('E' . ($ultimaFila + 4), 'COMISIÓN');
+        $sheet->setCellValue('E' . ($ultimaFila + 5), 'SUBTOTAL');
+        $sheet->setCellValue('E' . ($ultimaFila + 6), 'IVA 16%');
+        $sheet->setCellValue('E' . ($ultimaFila + 7), 'TOTAL');
+
+        $sheet->setCellValue('F' . ($ultimaFila + 3), '=F' . ($ultimaFila + 1));
+        $sheet->setCellValue('F' . ($ultimaFila + 4), '=F' . ($ultimaFila + 3) . '*C4');
+        $sheet->setCellValue('F' . ($ultimaFila + 5), '=F' . ($ultimaFila + 3) . '+F' . ($ultimaFila + 4));
+        $sheet->setCellValue('F' . ($ultimaFila + 6), '=F' . ($ultimaFila + 5) . '*C5');
+        $sheet->setCellValue('F' . ($ultimaFila + 7), '=F' . ($ultimaFila + 5) . '+F' . ($ultimaFila + 6));
+
+        $sheet->getStyle('E' . ($ultimaFila + 2) . ':F' . ($ultimaFila + 7))->applyFromArray([
+            'font' => [
+                'bold' => true,
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ],
+        ]);
+
+        $sheet->getStyle('F' . ($fila_inicio + 1) . ':F' . ($ultimaFila + 7))
+            ->getNumberFormat()->setFormatCode('"$ "#,##0.00');
+
+        $sheet->getStyle('A' . ($fila_inicio + 1) . ':J' . $ultimaFila)->applyFromArray([
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => ['rgb' => '000000'],
+                ],
+            ],
+        ]);
+
+        $sheet->getStyle('E' . ($ultimaFila + 3) . ':F' . ($ultimaFila + 7))->applyFromArray([
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    'color' => ['rgb' => '000000'],
+                ],
+            ],
+        ]);
+
+        $name = "PAGO ADMON. FONDO_" . $com_cliente['com_cliente_razon_social'];
+
+        $out = (new exportador\output())->genera_salida_xls(header: $header, libro: $spreadsheet, name: $name,
+            path_base: $this->path_base);
+        if (isset($out['error'])) {
+            $error = $this->errores->error('Error al aplicar generar salida', $out);
             if (!$header) {
                 return $error;
             }
@@ -855,7 +980,9 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
             die('Error');
         }
 
-        header('Location:' . $this->link_lista);
+        if (!$header) {
+            return $out;
+        }
         exit;
     }
 }
