@@ -779,6 +779,8 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
             die('Error');
         }
 
+        $data = array();
+
         foreach ($ks_cliente_empleado->registros as $empleado) {
             $filtro = array('em_empleado_id' => $empleado['em_empleado_id']);
             $order = array('em_cuenta_bancaria_id' => 'DESC');
@@ -806,7 +808,7 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
                 $sucursal = $bn_sucursal['bn_sucursal_descripcion'];
             }
 
-            $data2[] = [
+            $data[] = [
                 $empleado['em_empleado_codigo'],
                 $empleado['em_empleado_nss'],
                 $empleado['em_empleado_rfc'],
@@ -889,6 +891,24 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
             $columna++;
         }
 
+        $datos = [
+            1.00, 2.00, 3.00, 1.00, 2.00, 3.00, 1.00, 2.00, 3.00, 1.00
+        ];
+
+        $fila = $fila_inicio + 1;
+        $columna = $columna_inicio;
+
+        foreach ($data as $valor) {
+            foreach ($cabecera as $indice => $encabezado) {
+                $sheet->setCellValue($columna . $fila, $valor[$indice]);
+                $columna++;
+            }
+            $fila++;
+            $columna = $columna_inicio;
+        }
+
+
+
         $sheet->getStyle("A8:J8")->applyFromArray([
             'font' => [
                 'bold' => true,
@@ -910,16 +930,6 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
             ],
         ]);
 
-        $datos = [
-            1.00, 2.00, 3.00
-        ];
-
-        $fila = $fila_inicio + 1;
-        foreach ($datos as $valor) {
-            $sheet->setCellValue('F' . $fila, $valor);
-            $fila++;
-        }
-
         $ultimaFila = $fila - 1;
 
         $sheet->setCellValue('F' . ($ultimaFila + 1), '=SUM(F' . ($fila_inicio + 1) . ':F' . $ultimaFila . ')');
@@ -931,9 +941,9 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         $sheet->setCellValue('E' . ($ultimaFila + 7), 'TOTAL');
 
         $sheet->setCellValue('F' . ($ultimaFila + 3), '=F' . ($ultimaFila + 1));
-        $sheet->setCellValue('F' . ($ultimaFila + 4), '=F' . ($ultimaFila + 3) . '*C4');
+        $sheet->setCellValue('F' . ($ultimaFila + 4), '=F' . ($ultimaFila + 3) . '* C4');
         $sheet->setCellValue('F' . ($ultimaFila + 5), '=F' . ($ultimaFila + 3) . '+F' . ($ultimaFila + 4));
-        $sheet->setCellValue('F' . ($ultimaFila + 6), '=F' . ($ultimaFila + 5) . '*C5');
+        $sheet->setCellValue('F' . ($ultimaFila + 6), '=F' . ($ultimaFila + 5) . '* C5');
         $sheet->setCellValue('F' . ($ultimaFila + 7), '=F' . ($ultimaFila + 5) . '+F' . ($ultimaFila + 6));
 
         $sheet->getStyle('E' . ($ultimaFila + 2) . ':F' . ($ultimaFila + 7))->applyFromArray([
@@ -947,7 +957,7 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         ]);
 
         $sheet->getStyle('F' . ($fila_inicio + 1) . ':F' . ($ultimaFila + 7))
-            ->getNumberFormat()->setFormatCode('"$ "#,##0.00');
+            ->getNumberFormat()->setFormatCode('_-$* #,##0.00_ ;_-$* #,##0.00_ ;_-$* "-"??_ ;_(@_)');
 
         $sheet->getStyle('A' . ($fila_inicio + 1) . ':J' . $ultimaFila)->applyFromArray([
             'borders' => [
