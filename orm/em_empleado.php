@@ -107,6 +107,10 @@ class em_empleado extends \gamboamartin\empleado\models\em_empleado {
             return $this->error->error(mensaje: 'Error al modificar cliente',data:  $r_modifica);
         }
 
+        if (isset($registro['status'])){
+            return $r_modifica;
+        }
+
         $modifica_ks_empleado = $this->modifica_ks_empelado(em_empleado_id: $id, registros: $registro_original);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al modificar ks_empleado',data:  $modifica_ks_empleado);
