@@ -15,6 +15,7 @@ use gamboamartin\direccion_postal\controllers\_init_dps;
 use gamboamartin\empleado\models\em_cuenta_bancaria;
 use gamboamartin\errores\errores;
 use base\controller\init;
+use gamboamartin\ks_ops\html\ks_cliente_html;
 use gamboamartin\ks_ops\html\selec_html;
 use gamboamartin\ks_ops\models\com_cliente;
 use gamboamartin\ks_ops\models\em_empleado;
@@ -664,7 +665,7 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
 
         $cat_sat_actividad_economica_id = (
         new cat_sat_actividad_economica_html(html: $this->html_base))->select_cat_sat_actividad_economica_id(
-                cols: 12, con_registros: true, id_selected: $com_cliente->cat_sat_actividad_economica_id,
+                cols: 6, con_registros: true, id_selected: $com_cliente->cat_sat_actividad_economica_id,
                 link: $this->link, label: 'Giro/Actividad');
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al obtener cat_sat_actividad_economica_id',
@@ -683,8 +684,17 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         $this->inputs->cat_sat_actividad_economica_id = $cat_sat_actividad_economica_id;
         $this->inputs->cat_sat_periodicidad_id = $cat_sat_periodicidad_id;
 
-        return $r_modifica_bd;
+        $this->row_upd->iva = $com_cliente->ks_cliente_iva;
 
+        $ks_cliente_iva = (new ks_cliente_html(html: $this->html_base))->input_iva(cols: 6, row_upd: $this->row_upd,
+            value_vacio: false);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar input', data: $ks_cliente_iva);
+        }
+
+        $this->inputs->ks_cliente_iva = $ks_cliente_iva;
+
+        return $r_modifica_bd;
     }
 
     public function modifica_cliente(bool $header, bool $ws = false, array $not_actions = array()): array|stdClass

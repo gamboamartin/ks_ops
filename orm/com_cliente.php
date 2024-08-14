@@ -42,7 +42,7 @@ class com_cliente extends \gamboamartin\comercial\models\com_cliente {
 
             $ks_cliente_ins = $this->ks_cliente_ins(
                 cat_sat_actividad_economica_id: $registro_original['cat_sat_actividad_economica_id'],
-                com_cliente_id: $alta_bd->registro_id);
+                com_cliente_id: $alta_bd->registro_id, iva: $registro_original['iva']);
             if(errores::$error){
                 return $this->error->error(mensaje: 'Error al inicializar valores',data:  $ks_cliente_ins);
             }
@@ -93,12 +93,12 @@ class com_cliente extends \gamboamartin\comercial\models\com_cliente {
 
     }
 
-    private function ks_cliente_ins(int $cat_sat_actividad_economica_id, int $com_cliente_id): array
+    private function ks_cliente_ins(int $cat_sat_actividad_economica_id, int $com_cliente_id, float $iva): array
     {
         $ks_cliente_ins['com_cliente_id'] = $com_cliente_id;
         $ks_cliente_ins['cat_sat_actividad_economica_id'] = $cat_sat_actividad_economica_id;
-
         $ks_cliente_ins['cat_sat_periodicidad_id'] =  (new cat_sat_periodicidad($this->link))->id_predeterminado();
+        $ks_cliente_ins['iva'] = $iva;
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al obtener registro predeterminado cat_sat_periodicidad',data: $ks_cliente_ins);
         }
@@ -131,7 +131,7 @@ class com_cliente extends \gamboamartin\comercial\models\com_cliente {
             if(!$existe_ks_cliente){
                 $ks_cliente_ins = $this->ks_cliente_ins(
                     cat_sat_actividad_economica_id: $registro_original['cat_sat_actividad_economica_id'],
-                    com_cliente_id: $id);
+                    com_cliente_id: $id,iva: $registro_original['iva']);
 
                 $ks_cliente_alta = (new ks_cliente(link: $this->link))->alta_registro(registro: $ks_cliente_ins);
                 if(errores::$error){
@@ -144,6 +144,7 @@ class com_cliente extends \gamboamartin\comercial\models\com_cliente {
                     return $this->error->error(mensaje: 'Error al obtener ks_cliente',data:  $ks_cliente_id);
                 }
                 $ks_cliente_upd['cat_sat_actividad_economica_id'] = $registro_original['cat_sat_actividad_economica_id'];
+                $ks_cliente_upd['iva'] = $registro_original['iva'];
                 $ks_cliente_update = (new ks_cliente(link: $this->link))->modifica_bd(registro: $ks_cliente_upd,id: $ks_cliente_id);
                 if(errores::$error){
                     return $this->error->error(mensaje: 'Error al actualizar ks_cliente',data:  $ks_cliente_update);
