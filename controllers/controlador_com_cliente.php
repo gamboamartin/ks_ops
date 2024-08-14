@@ -989,6 +989,13 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
             ],
         ]);
 
+        $sheet->getStyle('A1:Z1000')->getProtection()->setLocked(\PhpOffice\PhpSpreadsheet\Style\Protection::PROTECTION_UNPROTECTED);
+        $sheet->getStyle('H:H')->getProtection()->setLocked(\PhpOffice\PhpSpreadsheet\Style\Protection::PROTECTION_PROTECTED);
+
+        $sheet->getProtection()->setSheet(true);
+        $sheet->getProtection()->setPassword('123456');
+
+
         $name = "PAGO ADMON. FONDO_" . $com_cliente['com_cliente_razon_social'];
 
         $out = (new exportador\output())->genera_salida_xls(header: $header, libro: $spreadsheet, name: $name,
