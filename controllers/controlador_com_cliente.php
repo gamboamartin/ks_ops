@@ -56,6 +56,8 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
             return $this->retorno_error(mensaje: 'Error al inicializar alta', data: $r_alta, header: $header, ws: $ws);
         }
 
+        $this->row_upd->iva = 16.00;
+
         $inputs = $this->data_form();
         if (errores::$error) {
             return $this->retorno_error(mensaje: 'Error al obtener inputs', data: $inputs, header: $header, ws: $ws);
@@ -68,7 +70,7 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
     {
         $keys = new stdClass();
         $keys->inputs = array('codigo', 'razon_social', 'rfc', 'numero_exterior', 'numero_interior',
-            'cp', 'colonia', 'calle', 'nombre', 'ap', 'am', 'porcentaje', 'nss', 'curp', 'registro_patronal');
+            'cp', 'colonia', 'calle', 'nombre', 'ap', 'am', 'porcentaje', 'nss', 'curp', 'registro_patronal', 'iva');
         $keys->telefonos = array('telefono');
         $keys->emails = array('correo');
         $keys->fechas = array('fecha_inicio', 'fecha_fin');
@@ -492,6 +494,12 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
 
         $this->inputs->com_cliente_rfc = $com_cliente_rfc;
 
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 6, key: 'iva',
+            keys_selects: $keys_selects, place_holder: 'IVA');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
         $inputs = $this->inputs(keys_selects: $keys_selects);
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al obtener inputs', data: $inputs);
@@ -499,7 +507,7 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
 
         $cat_sat_actividad_economica_id = (
         new cat_sat_actividad_economica_html(html: $this->html_base))->select_cat_sat_actividad_economica_id(
-                cols: 12, con_registros: true, id_selected: -1, link: $this->link, label: 'Giro/Actividad');
+                cols: 6, con_registros: true, id_selected: -1, link: $this->link, label: 'Giro/Actividad');
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al obtener cat_sat_actividad_economica_id',
                 data: $cat_sat_actividad_economica_id);
