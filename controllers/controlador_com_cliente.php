@@ -19,6 +19,7 @@ use gamboamartin\ks_ops\html\ks_cliente_html;
 use gamboamartin\ks_ops\html\selec_html;
 use gamboamartin\ks_ops\models\com_cliente;
 use gamboamartin\ks_ops\models\em_empleado;
+use gamboamartin\ks_ops\models\ks_cliente;
 use gamboamartin\ks_ops\models\ks_cliente_empleado;
 use gamboamartin\ks_ops\models\ks_comision_general;
 use gamboamartin\plugins\exportador;
@@ -784,11 +785,43 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
 
     public function reporte_empleados(bool $header, bool $ws = false): array|stdClass
     {
-        $com_cliente = (new com_cliente($this->link))->registro(registro_id: $this->registro_id);
+        $com_cliente = (new ks_cliente($this->link))->filtro_and(filtro: array('com_cliente.id' => $this->registro_id));
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al obtener cliente', data: $com_cliente);
         }
 
+        $com_cliente = $com_cliente->registros[0];
+        $fecha = date('Y-m-d');
+
+        $filtro['com_cliente_id'] = $this->registro_id;
+        $filtro['ks_comision_general.status'] = 'activo';
+        $order = array('ks_comision_general.fecha_fin' => 'DESC');
+        $filtro_especial[0][$fecha]['operador'] = '>=';
+        $filtro_especial[0][$fecha]['valor'] = 'ks_comision_general.fecha_inicio';
+        $filtro_especial[0][$fecha]['comparacion'] = 'AND';
+        $filtro_especial[0][$fecha]['valor_es_campo'] = true;
+        $filtro_especial[1][$fecha]['operador'] = '<=';
+        $filtro_especial[1][$fecha]['valor'] = 'ks_comision_general.fecha_fin';
+        $filtro_especial[1][$fecha]['comparacion'] = 'AND';
+        $filtro_especial[1][$fecha]['valor_es_campo'] = true;
+
+        $comision = (new ks_comision_general($this->link))->filtro_and(filtro: $filtro, filtro_especial: $filtro_especial,
+            order: $order);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener comision', data: $comision);
+            print_r($error);
+            die('Error');
+        }
+
+        if ($comision->n_registros == 0) {
+            $error = $this->errores->error(mensaje: 'No se encontró comisión para el cliente', data: $comision);
+            print_r($error);
+            die('Error');
+        }
+
+        $comision = $comision->registros[0];
+
+        $filtro = array();
         $filtro['com_cliente_id'] = $this->registro_id;
         $filtro['em_empleado.status'] = 'activo';
         $ks_cliente_empleado = (new ks_cliente_empleado($this->link))->filtro_and(filtro: $filtro);
@@ -853,8 +886,8 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
 
         $sheet->setCellValue('C2', $com_cliente['com_cliente_razon_social']);
         $sheet->setCellValue('C3', '-');
-        $sheet->setCellValue('C4', '0.11');
-        $sheet->setCellValue('C5', '0.16');
+        $sheet->setCellValue('C4', $comision['ks_comision_general_porcentaje'] / 100);
+        $sheet->setCellValue('C5', $com_cliente['ks_cliente_iva'] / 100);
         $sheet->setCellValue('C6', 'ADMON. FONDO');
 
         $sheet->mergeCells('C2:E2');
