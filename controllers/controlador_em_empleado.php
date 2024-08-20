@@ -31,7 +31,7 @@ final class controlador_em_empleado extends \gamboamartin\empleado\controllers\c
         $keys = new stdClass();
         $keys->inputs = array('codigo', 'descripcion', 'nombre', 'ap', 'am',  'rfc', 'curp', 'nss', 'salario_diario',
             'salario_diario_integrado','com_sucursal','org_sucursal', 'salario_total', 'numero_exterior', 'numero_interior',
-            'registro_patronal', 'cp', 'colonia', 'calle');
+            'registro_patronal', 'cp', 'colonia', 'calle', 'receptor', 'asunto', 'mensaje');
         $keys->telefonos = array('telefono');
         $keys->fechas = array('fecha_inicio_rel_laboral', 'fecha_inicio', 'fecha_final');
         $keys->emails = array('correo');
@@ -107,6 +107,24 @@ final class controlador_em_empleado extends \gamboamartin\empleado\controllers\c
 
         $keys_selects = (new \base\controller\init())->key_select_txt(cols: 12, key: 'registro_patronal',
             keys_selects: $keys_selects, place_holder: 'Registro Patronal');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 12, key: 'receptor',
+            keys_selects: $keys_selects, place_holder: 'Receptor');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 12, key: 'asunto',
+            keys_selects: $keys_selects, place_holder: 'Asunto');
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
+        }
+
+        $keys_selects = (new \base\controller\init())->key_select_txt(cols: 12, key: 'asunto',
+            keys_selects: $keys_selects, place_holder: 'Asunto');
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al maquetar key_selects', data: $keys_selects);
         }
