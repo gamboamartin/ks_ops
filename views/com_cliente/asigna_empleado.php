@@ -47,9 +47,15 @@
     </div>
 </main>
 
+
+
 <main class="main section-color-primary">
     <div class="container">
         <div class="row">
+            <div id="preloader" style="display: none;">
+                <div class="spinner"></div>
+            </div>
+
             <div class="col-md-12">
                 <table id="table-em_empleado" class="table mb-0 table-striped table-sm "></table>
             </div>

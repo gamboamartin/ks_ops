@@ -1,3 +1,11 @@
+const showPreloader = () => {
+    document.getElementById('preloader').style.display = 'flex';
+};
+
+const hidePreloader = () => {
+    document.getElementById('preloader').style.display = 'none';
+};
+
 let sl_dp_pais = $("#dp_pais_id");
 let sl_dp_estado = $("#dp_estado_id");
 let sl_dp_municipio = $("#dp_municipio_id");
@@ -17,9 +25,13 @@ let getData = (url) => {
 
 let url = get_url("em_empleado", "acciones_permitidas", {}, 0);
 let permisos = [];
+
+showPreloader();
 getData(url).then(data => {
     permisos = data.data;
     const table_em_empleado = table('em_empleado', columns_em_empleado, filtro_em_empleado, [], callback_em_empleado, false);
+}).finally(() => {
+    hidePreloader();
 });
 
 const columns_em_empleado = [
