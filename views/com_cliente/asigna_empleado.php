@@ -47,8 +47,6 @@
     </div>
 </main>
 
-
-
 <main class="main section-color-primary">
     <div class="container">
         <div class="row">

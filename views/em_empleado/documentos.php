@@ -1,35 +1,30 @@
-<?php /** @var  gamboamartin\inmuebles\controllers\controlador_inm_prospecto $controlador  controlador en ejecucion */ ?>
+<?php /** @var  \gamboamartin\ks_ops\controllers\controlador_em_empleado $controlador  controlador en ejecucion */ ?>
 <?php use config\views; ?>
 
 <main class="main section-color-primary">
     <div class="container">
 
         <div class="row">
-
             <div class="col-lg-12">
-
-                <div class="widget" >
-
-                    <?php include (new views())->ruta_templates."head/title.php"; ?>
-                    <?php include (new views())->ruta_templates."head/subtitulo.php"; ?>
-                    <?php include (new views())->ruta_templates."mensajes.php"; ?>
-
-                    <?php echo $controlador->inputs->nombre; ?>
-                    <?php echo $controlador->inputs->ap; ?>
-                    <?php echo $controlador->inputs->am; ?>
-                    <?php echo $controlador->inputs->telefono; ?>
-                    <?php echo $controlador->inputs->correo; ?>
-                    <?php echo $controlador->inputs->rfc; ?>
-                    <?php echo $controlador->inputs->nss; ?>
-                    <?php echo $controlador->inputs->curp; ?>
-
+                <div class="widget  widget-box box-container form-main widget-form-cart" id="form" style="display: flow-root">
+                        <?php include (new views())->ruta_templates . "head/title.php"; ?>
+                        <?php include (new views())->ruta_templates . "head/subtitulo.php"; ?>
+                        <?php include (new views())->ruta_templates . "mensajes.php"; ?>
+                        <?php echo $controlador->inputs->nombre; ?>
+                        <?php echo $controlador->inputs->ap; ?>
+                        <?php echo $controlador->inputs->am; ?>
+                        <?php echo $controlador->inputs->telefono; ?>
+                        <?php echo $controlador->inputs->correo; ?>
+                        <?php echo $controlador->inputs->rfc; ?>
+                        <?php echo $controlador->inputs->nss; ?>
+                        <?php echo $controlador->inputs->curp; ?>
                 </div>
             </div>
-
         </div>
     </div>
-    <br>
+</main>
 
+<main class="main section-color-primary">
     <div class="container">
         <div class="row">
             <div class="col-lg-12 table-responsive">
