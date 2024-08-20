@@ -6,6 +6,22 @@ let sl_dp_colonia = $("#dp_colonia_postal_id");
 let sl_dp_calle_pertenece = $("#dp_calle_pertenece_id");
 let registro_id = getParameterByName('registro_id');
 
+let getData = (url) => {
+    return fetch(url)
+        .then(response => response.json())
+        .catch(err => {
+            alert('Error al ejecutar');
+            console.error("ERROR: ", err.message);
+        });
+};
+
+let url = get_url("em_empleado", "acciones_permitidas", {}, 0);
+let permisos = [];
+getData(url).then(data => {
+    permisos = data.data;
+    const table_em_empleado = table('em_empleado', columns_em_empleado, filtro_em_empleado, [], callback_em_empleado, false);
+});
+
 const columns_em_empleado = [
     {
         title: "Id",
@@ -24,6 +40,10 @@ const columns_em_empleado = [
         data: "em_empleado_nss"
     },
     {
+        title: "Estado",
+        data: "em_empleado_status"
+    },
+    {
         title: 'Acciones',
         data: null
     }
@@ -39,45 +59,49 @@ const filtro_em_empleado = [
 const callback_em_empleado = (seccion, columns) => {
     return [
         {
+            targets: -2,
+            render: function (data, type, row, meta) {
+                let etapa = row[`em_empleado_status`];
+                let badge = 'delete';
+
+                if (etapa.toLowerCase() === 'activo') {
+                    badge = 'success';
+                }
+
+                return `<span class="badge badge-pill badge-${badge}">${etapa.toLowerCase()}</span>`;
+            }
+        },
+        {
             targets: -1,
             render: function (data, type, row, meta) {
-                let sec = getParameterByName('seccion');
-                let acc = getParameterByName('accion');
-                let registro_id = getParameterByName('registro_id');
+                let links = '';
+                for (permiso_empleado of permisos) {
+                    let url_permiso = $(location).attr('href');
+                    let sec = getParameterByName('seccion');
+                    let acc = getParameterByName('accion');
+                    let registro_id = getParameterByName('registro_id');
 
-                let url_elimina = $(location).attr('href');
-                url_elimina = url_elimina.replace(acc, "elimina_bd");
-                url_elimina = url_elimina.replace(sec, `gt_orden_compra_cotizacion`);
-                url_elimina = url_elimina.replace(registro_id, row[`gt_orden_compra_cotizacion_id`]);
+                    url_permiso = url_permiso.replace(acc, permiso_empleado.adm_accion_descripcion);
+                    url_permiso = url_permiso.replace(sec, permiso_empleado.adm_seccion_descripcion);
+                    url_permiso = url_permiso.replace(registro_id, row[`em_empleado_id`]);
 
-                let url_actualiza = $(location).attr('href');
-                url_actualiza = url_actualiza.replace(acc, "modifica");
-                url_actualiza = url_actualiza.replace(sec, "gt_orden_compra");
-                url_actualiza = url_actualiza.replace(registro_id, row[`gt_orden_compra_id`]);
+                    links += `<a href="${url_permiso}">${permiso_empleado.adm_accion_titulo}</a>`;
+                }
 
                 let dropdown_menu = `
                     <div class="dropdown">
                         <span class="dropbtn">&#9776;</span>
                         <div class="dropdown-content">
-                            <a href="${url_actualiza}">Actualiza</a>
-                            <a href="${url_actualiza}">Actualiza</a>
-                            <a href="${url_actualiza}">Actualiza</a>
-                            <a href="${url_actualiza}">Actualiza</a>
-                            <a href="${url_actualiza}">Actualiza</a>
-                            <a href="${url_actualiza}">Actualiza</a>
-                            <a href="${url_actualiza}">Actualiza</a>
-                            <a href="#" data-url="${url_elimina}" class="btn-elimina">Elimina</a>
+                            ${links}
                         </div>
                     </div>
                 `;
-
                 return dropdown_menu;
             }
         }
     ]
 }
 
-const table_pr_proceso = table('em_empleado', columns_em_empleado, filtro_em_empleado, [], callback_em_empleado, false);
 
 let animaciones = (inputs,efecto = 0,margin = 0) => {
     inputs.forEach( function(valor, indice, array) {

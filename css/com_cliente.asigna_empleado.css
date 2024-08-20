@@ -56,3 +56,11 @@
 .dropdown:hover .dropbtn {
     color: #555;
 }
+
+.badge-delete {
+    background-color: #ea0505;
+}
+
+.badge-success {
+    background-color: #0f9d58;
+}
