@@ -37,7 +37,6 @@ var closeBtn = document.getElementById("closeModalBtn");
 var closeMdl = document.getElementById("closeModalSendBtn");
 var openMdl = document.getElementById("enviar");
 
-
 $(document).on("click", "#table-em_empleado a[title='Vista Previa']", function (event) {
     event.preventDefault();
     var url = $(this).attr("href");
@@ -51,8 +50,6 @@ $(document).on("click", "#table-em_empleado a[title='Vista Previa']", function (
         success: function (data) {
             var tempDiv = $("<div>").html(data);
             var viewContent = tempDiv.find(".view");
-
-            console.log(data)
 
             $("#myModal .content").html(viewContent);
             modal.showModal();
@@ -69,12 +66,19 @@ $(document).on("click", "#table-em_empleado a[title='Vista Previa']", function (
 closeBtn.onclick = function () {
     $("#myModal .content").empty();
     modal.close();
+    modalSend.close();
 }
 
 modal.addEventListener('click', function (event) {
     if (event.target === modal) {
         $("#myModal .content").empty();
         modal.close();
+    }
+});
+
+modalSend.addEventListener('click', function (event) {
+    if (event.target === modalSend) {
+        modalSend.close();
     }
 });
 
@@ -131,7 +135,6 @@ $("#table-em_empleado").on('click', 'tr:first-child', function (e) {
         documentos_seleccionados = [];
 
         selectedData.each(function (value, index, data) {
-            console.log(value);
 
             const url = $(value.vista_previa).attr('href')
             const params = new URLSearchParams(url);
