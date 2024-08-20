@@ -51,10 +51,8 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <div class="widget widget-box box-container widget-mylistings">
-                    <?php echo $controlador->contenido_table; ?>
-                </div> <!-- /. widget-table-->
-            </div><!-- /.center-content -->
+                <table id="table-em_empleado" class="table mb-0 table-striped table-sm "></table>
+            </div>
         </div>
     </div>
 </main>

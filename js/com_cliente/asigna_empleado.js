@@ -1,11 +1,83 @@
-$('#ks_cliente_empleado').DataTable();
-
 let sl_dp_pais = $("#dp_pais_id");
 let sl_dp_estado = $("#dp_estado_id");
 let sl_dp_municipio = $("#dp_municipio_id");
 let sl_dp_cp = $("#dp_cp_id");
 let sl_dp_colonia = $("#dp_colonia_postal_id");
 let sl_dp_calle_pertenece = $("#dp_calle_pertenece_id");
+let registro_id = getParameterByName('registro_id');
+
+const columns_em_empleado = [
+    {
+        title: "Id",
+        data: "em_empleado_id"
+    },
+    {
+        title: "Empleado",
+        data: "em_empleado_nombre_completo"
+    },
+    {
+        title: "RFC",
+        data: "em_empleado_rfc"
+    },
+    {
+        title: "NSS",
+        data: "em_empleado_nss"
+    },
+    {
+        title: 'Acciones',
+        data: null
+    }
+];
+
+const filtro_em_empleado = [
+    {
+        "key": "ks_cliente_empleado.com_cliente_id",
+        "valor": registro_id
+    }
+];
+
+const callback_em_empleado = (seccion, columns) => {
+    return [
+        {
+            targets: -1,
+            render: function (data, type, row, meta) {
+                let sec = getParameterByName('seccion');
+                let acc = getParameterByName('accion');
+                let registro_id = getParameterByName('registro_id');
+
+                let url_elimina = $(location).attr('href');
+                url_elimina = url_elimina.replace(acc, "elimina_bd");
+                url_elimina = url_elimina.replace(sec, `gt_orden_compra_cotizacion`);
+                url_elimina = url_elimina.replace(registro_id, row[`gt_orden_compra_cotizacion_id`]);
+
+                let url_actualiza = $(location).attr('href');
+                url_actualiza = url_actualiza.replace(acc, "modifica");
+                url_actualiza = url_actualiza.replace(sec, "gt_orden_compra");
+                url_actualiza = url_actualiza.replace(registro_id, row[`gt_orden_compra_id`]);
+
+                let dropdown_menu = `
+                    <div class="dropdown">
+                        <span class="dropbtn">&#9776;</span>
+                        <div class="dropdown-content">
+                            <a href="${url_actualiza}">Actualiza</a>
+                            <a href="${url_actualiza}">Actualiza</a>
+                            <a href="${url_actualiza}">Actualiza</a>
+                            <a href="${url_actualiza}">Actualiza</a>
+                            <a href="${url_actualiza}">Actualiza</a>
+                            <a href="${url_actualiza}">Actualiza</a>
+                            <a href="${url_actualiza}">Actualiza</a>
+                            <a href="#" data-url="${url_elimina}" class="btn-elimina">Elimina</a>
+                        </div>
+                    </div>
+                `;
+
+                return dropdown_menu;
+            }
+        }
+    ]
+}
+
+const table_pr_proceso = table('em_empleado', columns_em_empleado, filtro_em_empleado, [], callback_em_empleado, false);
 
 let animaciones = (inputs,efecto = 0,margin = 0) => {
     inputs.forEach( function(valor, indice, array) {
