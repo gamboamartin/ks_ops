@@ -8,7 +8,7 @@ sl_bn_sucursal.change(function () {
     let codigo = option.data("bn_sucursal_codigo").toString();
 
     let formato = codigo.split('').map(char => char === '0' ? `\\${char}` : char).join('');
-    let mascara = `${formato}000000000000000000`;
+    let mascara = `${formato}000000000000000`;
 
     let txt_clabe = document.getElementById('clabe');
     let valor_actual = txt_clabe.value;
