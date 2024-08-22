@@ -10,6 +10,7 @@ namespace gamboamartin\ks_ops\controllers;
 
 use gamboamartin\direccion_postal\models\dp_municipio;
 use gamboamartin\errores\errores;
+use gamboamartin\ks_ops\html\ks_empleado_html;
 use gamboamartin\ks_ops\models\em_empleado;
 use gamboamartin\template_1\html;
 use PDO;
@@ -134,6 +135,10 @@ final class controlador_em_empleado extends \gamboamartin\empleado\controllers\c
 
     public function cuenta_bancaria(bool $header = true, bool $ws = false, array $not_actions = array()): array|string
     {
+        $moficia = $this->modifica(header: $header, ws: $ws);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al obtener modifica', data: $moficia);
+        }
         $seccion = "em_cuenta_bancaria";
 
         $data_view = new stdClass();
@@ -149,6 +154,14 @@ final class controlador_em_empleado extends \gamboamartin\empleado\controllers\c
             return $this->retorno_error(
                 mensaje: 'Error al obtener tbody', data: $contenido_table, header: $header, ws: $ws);
         }
+
+        $em_empleado_rfc = (new ks_empleado_html(html: $this->html_base))->input_clabe(cols: 12, row_upd: $this->row_upd,
+            value_vacio: false);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al maquetar input', data: $em_empleado_rfc);
+        }
+
+        $this->inputs->em_cuenta_bancaria_clabe = $em_empleado_rfc;
 
         return $contenido_table;
     }
