@@ -32,10 +32,10 @@ final class controlador_em_empleado extends \gamboamartin\empleado\controllers\c
         $keys = new stdClass();
         $keys->inputs = array('codigo', 'descripcion', 'nombre', 'ap', 'am',  'rfc', 'curp', 'nss', 'salario_diario',
             'salario_diario_integrado','com_sucursal','org_sucursal', 'salario_total', 'numero_exterior', 'numero_interior',
-            'registro_patronal', 'cp', 'colonia', 'calle', 'asunto', 'mensaje');
+            'registro_patronal', 'cp', 'colonia', 'calle', 'asunto', 'mensaje', 'receptor');
         $keys->telefonos = array('telefono');
         $keys->fechas = array('fecha_inicio_rel_laboral', 'fecha_inicio', 'fecha_final');
-        $keys->emails = array('correo', 'receptor');
+        $keys->emails = array('correo');
         $keys->selects = array();
 
         $init_data = array();
@@ -155,13 +155,13 @@ final class controlador_em_empleado extends \gamboamartin\empleado\controllers\c
                 mensaje: 'Error al obtener tbody', data: $contenido_table, header: $header, ws: $ws);
         }
 
-        $em_empleado_rfc = (new ks_empleado_html(html: $this->html_base))->input_clabe(cols: 12, row_upd: $this->row_upd,
+        $em_cuenta_bancaria_clabe = (new ks_empleado_html(html: $this->html_base))->input_clabe(cols: 12, row_upd: $this->row_upd,
             value_vacio: false);
         if (errores::$error) {
-            return $this->errores->error(mensaje: 'Error al maquetar input', data: $em_empleado_rfc);
+            return $this->errores->error(mensaje: 'Error al maquetar input', data: $em_cuenta_bancaria_clabe);
         }
 
-        $this->inputs->em_cuenta_bancaria_clabe = $em_empleado_rfc;
+        $this->inputs->em_cuenta_bancaria_clabe = $em_cuenta_bancaria_clabe;
 
         return $contenido_table;
     }
