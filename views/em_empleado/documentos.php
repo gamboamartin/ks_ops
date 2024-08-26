@@ -57,6 +57,7 @@
               enctype="multipart/form-data">
             <input type="hidden" id="documentos-enviar" name="documentos" required>
             <?php echo $controlador->inputs->receptor; ?>
+            <?php echo $controlador->inputs->cc; ?>
             <?php echo $controlador->inputs->asunto; ?>
             <?php echo $controlador->inputs->mensaje; ?>
             <button id="enviarDocs" class="btn btn-success">Enviar</button>
