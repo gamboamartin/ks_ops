@@ -516,16 +516,14 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
             return $this->errores->error(mensaje: 'Error al obtener inputs', data: $inputs);
         }
 
-        $cat_sat_actividad_economica_id = (
-        new cat_sat_actividad_economica_html(html: $this->html_base))->select_cat_sat_actividad_economica_id(
-                cols: 6, con_registros: true, id_selected: -1, link: $this->link, label: 'Giro/Actividad');
+        $cat_sat_actividad_economica_id = (new selec_html(html: $this->html_base))->select_cat_sat_actividad_economica_id(
+                cols: 6, con_registros: true, id_selected: -1, link: $this->link, label: 'Giro/Actividad', required: true);
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al obtener cat_sat_actividad_economica_id',
                 data: $cat_sat_actividad_economica_id);
         }
 
         $inputs->cat_sat_actividad_economica_id = $cat_sat_actividad_economica_id;
-
 
         return $inputs;
     }
@@ -674,9 +672,9 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         }
 
         $cat_sat_actividad_economica_id = (
-        new cat_sat_actividad_economica_html(html: $this->html_base))->select_cat_sat_actividad_economica_id(
+        new selec_html(html: $this->html_base))->select_cat_sat_actividad_economica_id(
                 cols: 6, con_registros: true, id_selected: $com_cliente->cat_sat_actividad_economica_id,
-                link: $this->link, label: 'Giro/Actividad');
+                link: $this->link, label: 'Giro/Actividad', required: true);
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al obtener cat_sat_actividad_economica_id',
                 data: $cat_sat_actividad_economica_id);
