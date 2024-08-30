@@ -1,6 +1,7 @@
 <?php
 namespace gamboamartin\ks_ops\models;
 use gamboamartin\cat_sat\models\cat_sat_periodicidad;
+use gamboamartin\cat_sat\models\cat_sat_regimen_fiscal;
 use gamboamartin\cat_sat\models\cat_sat_tipo_persona;
 use gamboamartin\direccion_postal\models\dp_municipio;
 use gamboamartin\errores\errores;
@@ -59,16 +60,71 @@ class com_cliente extends \gamboamartin\comercial\models\com_cliente {
 
     public function valores_predeterminados() : array
     {
-        $this->registro['numero_exterior'] = 1;
-
-        $this->registro['dp_municipio_id'] = (new dp_municipio(link: $this->link))->id_predeterminado();
-        if(errores::$error){
-            return $this->error->error(mensaje: 'Error al obtener id municipio predeterminado', data: $this->registro);
+        if (!isset($this->registro['numero_exterior'])) {
+            $this->registro['numero_exterior'] = 1;
         }
 
-        $this->registro['cat_sat_tipo_persona_id'] = (new cat_sat_tipo_persona(link: $this->link))->id_predeterminado();
-        if(errores::$error){
-            return $this->error->error(mensaje: 'Error al obtener id tipo persona predeterminado', data: $this->registro);
+        if (isset($this->registro['tipo_persona'])) {
+            $cat_sat_tipo_persona = (new cat_sat_tipo_persona(link: $this->link))->filtro_and(
+                filtro: ['cat_sat_tipo_persona.descripcion' => $this->registro['tipo_persona']]);
+            if(errores::$error){
+                return $this->error->error(mensaje: 'Error al obtener cat_sat_tipo_persona',data:  $cat_sat_tipo_persona);
+            }
+
+            if (count($cat_sat_tipo_persona->registros) == 0) {
+                return $this->error->error(mensaje: 'No se encontró el tipo de persona: '.$this->registro['tipo_persona'],
+                    data:  $this->registro);
+            }
+
+            $this->registro['cat_sat_tipo_persona_id'] = $cat_sat_tipo_persona->registros[0]['cat_sat_tipo_persona_id'];
+            unset($this->registro['tipo_persona']);
+        }
+
+        if (isset($this->registro['regimen_fiscal'])) {
+            $cat_sat_regimen_fiscal = (new cat_sat_regimen_fiscal(link: $this->link))->filtro_and(
+                filtro: ['cat_sat_regimen_fiscal.descripcion' => $this->registro['regimen_fiscal']]);
+            if(errores::$error){
+                return $this->error->error(mensaje: 'Error al obtener cat_sat_regimen_fiscal',data:  $cat_sat_regimen_fiscal);
+            }
+
+            if (count($cat_sat_regimen_fiscal->registros) == 0) {
+                return $this->error->error(mensaje: 'No se encontró el régimen fiscal: '.$this->registro['regimen_fiscal'],
+                    data:  $this->registro);
+            }
+
+            $this->registro['cat_sat_regimen_fiscal_id'] = $cat_sat_regimen_fiscal->registros[0]['cat_sat_regimen_fiscal_id'];
+            unset($this->registro['regimen_fiscal']);
+        }
+
+
+        if(isset($this->registro['municipio'])) {
+            $dp_municipio = (new dp_municipio(link: $this->link))->filtro_and(
+                filtro: ['dp_municipio.descripcion' => $this->registro['municipio']]);
+            if(errores::$error){
+                return $this->error->error(mensaje: 'Error al obtener dp_municipio',data:  $dp_municipio);
+            }
+
+            if (count($dp_municipio->registros) == 0) {
+                return $this->error->error(mensaje: 'No se encontró el municipio: '.$this->registro['municipio'],
+                    data:  $this->registro);
+            }
+
+            $this->registro['dp_municipio_id'] = $dp_municipio->registros[0]['dp_municipio_id'];
+            unset($this->registro['municipio']);
+        }
+
+        if (!isset($this->registro['dp_municipio_id'])) {
+            $this->registro['dp_municipio_id'] = (new dp_municipio(link: $this->link))->id_predeterminado();
+            if(errores::$error){
+                return $this->error->error(mensaje: 'Error al obtener id municipio predeterminado', data: $this->registro);
+            }
+        }
+
+        if (!isset($this->registro['cat_sat_tipo_persona_id'])) {
+            $this->registro['cat_sat_tipo_persona_id'] = (new cat_sat_tipo_persona(link: $this->link))->id_predeterminado();
+            if(errores::$error){
+                return $this->error->error(mensaje: 'Error al obtener id tipo persona predeterminado', data: $this->registro);
+            }
         }
 
         return $this->registro;

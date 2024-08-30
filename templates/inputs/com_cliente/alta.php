@@ -8,5 +8,13 @@
 <?php echo $controlador->inputs->razon_social; ?>
 <?php echo $controlador->inputs->com_cliente_rfc; ?>
 <?php echo $controlador->inputs->telefono; ?>
-
+<input type="hidden" name="tipo_persona" id="tipo_persona">
+<input type="hidden" name="regimen_fiscal" id="regimen_fiscal">
+<input type="hidden" name="estado" id="estado">
+<input type="hidden" name="municipio" id="municipio">
+<input type="hidden" name="cp" id="cp">
+<input type="hidden" name="colonia" id="colonia">
+<input type="hidden" name="calle" id="calle">
+<input type="hidden" name="numero_exterior" id="numero_exterior">
+<input type="hidden" name="numero_interior" id="numero_interior">
 <?php include (new views())->ruta_templates.'botons/submit/alta_bd.php';?>
