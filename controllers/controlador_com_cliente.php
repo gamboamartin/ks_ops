@@ -315,6 +315,14 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
         }
         $this->link_asigna_empleado_bd = $link;
 
+        $link = $this->obj_link->get_link(seccion: "com_cliente", accion: "leer_qr_bd");
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al recuperar link leer_qr_bd', data: $link);
+            print_r($error);
+            exit;
+        }
+        $this->link_com_cliente_leer_qr = $link;
+
         return $link;
     }
 
