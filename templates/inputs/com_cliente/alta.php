@@ -1,5 +1,6 @@
 <?php /** @var gamboamartin\comercial\controllers\controlador_com_cliente $controlador  controlador en ejecucion */ ?>
 <?php use config\views; ?>
+<?php echo $controlador->inputs->documento; ?>
 <?php echo $controlador->inputs->com_tipo_cliente_id; ?>
 <?php echo $controlador->inputs->cat_sat_actividad_economica_id; ?>
 <?php echo $controlador->inputs->iva; ?>
