@@ -13,6 +13,9 @@ document.getElementById('documento').addEventListener('change', function (event)
         return;
     }
 
+    var loaderOverlay = $('<div class="loader-overlay"><div class="loader"></div></div>');
+    $('body').append(loaderOverlay);
+
     var formData = new FormData();
     formData.append('documento', this.files[0]);
 
@@ -25,10 +28,11 @@ document.getElementById('documento').addEventListener('change', function (event)
         .then(response => response.json())
         .then(result => {
             console.log(result);
-
+            loaderOverlay.remove();
         })
         .catch(error => {
             alert('Error al leer el documento.');
             console.error('Error al subir el archivo:', error);
+            loaderOverlay.remove();
         });
 });
