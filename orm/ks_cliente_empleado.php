@@ -79,10 +79,10 @@ class ks_cliente_empleado extends _modelo_parent
             return $this->error->error(mensaje: 'Error al eliminar',data:  $r_del_bd);
         }
 
-        $empleado = (new em_empleado($this->link))->elimina_bd(id: $registro['em_empleado_id']);
+        /*$empleado = (new em_empleado($this->link))->elimina_bd(id: $registro['em_empleado_id']);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al eliminar empleado',data:  $empleado);
-        }
+        }*/
 
         return $r_del_bd;
     }
