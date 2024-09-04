@@ -181,6 +181,15 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
             return $this->errores->error(mensaje: 'Error al maquetar input', data: $em_empleado_nss);
         }
 
+        $documento = $this->html->input_file(cols: 12, name: 'documento', row_upd: new stdClass(), value_vacio: false,
+            place_holder: 'CIF', required: false);
+        if (errores::$error) {
+            return $this->retorno_error(
+                mensaje: 'Error al obtener inputs', data: $documento, header: $header, ws: $ws);
+        }
+
+        $this->inputs->documento = $documento;
+
         $this->inputs->em_empleado_rfc = $em_empleado_rfc;
         $this->inputs->em_empleado_curp = $em_empleado_curp;
         $this->inputs->em_empleado_nss = $em_empleado_nss;
