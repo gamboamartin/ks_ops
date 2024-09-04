@@ -1,39 +1,37 @@
-<?php /** @var  \gamboamartin\ks_ops\controllers\controlador_em_empleado $controlador  controlador en ejecucion */ ?>
+<?php /** @var  \gamboamartin\ks_ops\controllers\controlador_em_empleado $controlador controlador en ejecucion */ ?>
 <?php use config\views; ?>
 
 <main class="main section-color-primary">
     <div class="container">
-
         <div class="row">
             <div class="col-lg-12">
-                <div class="widget  widget-box box-container form-main widget-form-cart" id="form" style="display: flow-root">
-                        <?php include (new views())->ruta_templates . "head/title.php"; ?>
-                        <?php include (new views())->ruta_templates . "head/subtitulo.php"; ?>
-                        <?php include (new views())->ruta_templates . "mensajes.php"; ?>
-                        <?php echo $controlador->inputs->nombre; ?>
-                        <?php echo $controlador->inputs->ap; ?>
-                        <?php echo $controlador->inputs->am; ?>
-                        <?php echo $controlador->inputs->telefono; ?>
-                        <?php echo $controlador->inputs->correo; ?>
-                        <?php echo $controlador->inputs->rfc; ?>
-                        <?php echo $controlador->inputs->nss; ?>
-                        <?php echo $controlador->inputs->curp; ?>
+                <div class="widget  widget-box box-container form-main widget-form-cart" id="form"
+                     style="display: flow-root">
+                    <?php include (new views())->ruta_templates . "head/title.php"; ?>
+                    <?php include (new views())->ruta_templates . "head/subtitulo.php"; ?>
+                    <?php include (new views())->ruta_templates . "mensajes.php"; ?>
+                    <?php echo $controlador->inputs->nombre; ?>
+                    <?php echo $controlador->inputs->ap; ?>
+                    <?php echo $controlador->inputs->am; ?>
+                    <?php echo $controlador->inputs->telefono; ?>
+                    <?php echo $controlador->inputs->correo; ?>
+                    <?php echo $controlador->inputs->rfc; ?>
+                    <?php echo $controlador->inputs->nss; ?>
+                    <?php echo $controlador->inputs->curp; ?>
                 </div>
             </div>
         </div>
     </div>
 </main>
 
-<div class="container" style="margin-top: 20px;">
-    <div class="row">
-        <div class="col-lg-12" style="display: flex; gap: 15px;">
-            <button id="enviar" class="btn btn-success">Enviar Documentos</button>
-        </div>
-    </div>
-</div>
-
 <main class="main section-color-primary">
     <div class="container">
+        <div class="widget  widget-box box-container" style="padding: 20px 5px;t">
+        <div class="row">
+            <div class="col-lg-12" style="display: flex; gap: 15px;">
+                <button id="enviar" class="btn btn-success">Enviar Documentos</button>
+            </div>
+        </div>
         <div class="row">
             <div class="col-lg-12 table-responsive">
                 <table id="table-em_empleado" class="table mb-0 table-striped table-sm "></table>
