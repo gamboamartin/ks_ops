@@ -44,3 +44,19 @@
     <div class="content">
     </div>
 </dialog>
+
+<dialog id="modalSnd" style="max-width: 800px">
+    <span class="close-btn" id="closeModalSendBtn">&times;</span>
+    <h2>Enviar Documentos</h2>
+    <div class="content">
+        <form id="form-documentos-enviar" action="<?php echo $controlador->link_envia_documentos; ?>" method="post"
+              enctype="multipart/form-data">
+            <input type="hidden" id="documentos-enviar" name="documentos" required>
+            <?php echo $controlador->inputs->receptor; ?>
+            <?php echo $controlador->inputs->cc; ?>
+            <?php echo $controlador->inputs->asunto; ?>
+            <?php echo $controlador->inputs->mensaje; ?>
+            <button id="enviarDocs" class="btn btn-success">Enviar</button>
+        </form>
+    </div>
+</dialog>

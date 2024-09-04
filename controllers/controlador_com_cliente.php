@@ -81,7 +81,8 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
     {
         $keys = new stdClass();
         $keys->inputs = array('codigo', 'razon_social', 'rfc', 'numero_exterior', 'numero_interior',
-            'cp', 'colonia', 'calle', 'nombre', 'ap', 'am', 'porcentaje', 'nss', 'curp', 'registro_patronal', 'iva');
+            'cp', 'colonia', 'calle', 'nombre', 'ap', 'am', 'porcentaje', 'nss', 'curp', 'registro_patronal', 'iva',
+            'asunto', 'mensaje', 'receptor', 'cc', 'cco');
         $keys->telefonos = array('telefono');
         $keys->emails = array('correo');
         $keys->fechas = array('fecha_inicio', 'fecha_fin');
@@ -332,6 +333,15 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
             exit;
         }
         $this->link_asigna_empleado_bd = $link;
+
+        $this->link_envia_documentos = $this->obj_link->link_con_id(accion: "envia_documentos",link: $this->link,
+            registro_id: $this->registro_id,seccion: "com_cliente");
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener link',
+                data: $this->link_envia_documentos);
+            print_r($error);
+            exit;
+        }
 
         return $link;
     }
