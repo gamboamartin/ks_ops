@@ -3,6 +3,7 @@ namespace gamboamartin\ks_ops\models;
 use gamboamartin\cat_sat\models\cat_sat_periodicidad;
 use gamboamartin\cat_sat\models\cat_sat_regimen_fiscal;
 use gamboamartin\cat_sat\models\cat_sat_tipo_persona;
+use gamboamartin\comercial\models\com_cliente_documento;
 use gamboamartin\direccion_postal\models\dp_municipio;
 use gamboamartin\errores\errores;
 use PDO;
@@ -138,6 +139,10 @@ class com_cliente extends \gamboamartin\comercial\models\com_cliente {
         $del = (new ks_cliente(link: $this->link))->elimina_con_filtro_and(filtro: $filtro);
         if(errores::$error){
             return $this->error->error(mensaje: 'Error al eliminar ks_cliente',data:  $del);
+        }
+        $del = (new com_cliente_documento(link: $this->link))->elimina_con_filtro_and(filtro: $filtro);
+        if(errores::$error){
+            return $this->error->error(mensaje: 'Error al eliminar com_cliente_documento',data:  $del);
         }
         $del = parent::elimina_bd(id: $id);
         if(errores::$error){
