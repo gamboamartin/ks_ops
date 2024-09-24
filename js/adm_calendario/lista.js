@@ -1,5 +1,38 @@
 const registro_id = getParameterByName('registro_id');
 
+var loaderOverlay = $('<div class="loader-overlay"><div class="loader"></div></div>');
+$('.widget').append(loaderOverlay);
+
+let getData = (url) => {
+    return fetch(url)
+        .then(response => response.json())
+        .catch(err => {
+            alert('Error al ejecutar');
+            console.error("ERROR: ", err.message);
+        });
+};
+
+let url = get_url("adm_calendario", "acciones_permitidas", {}, 0);
+let permisos = [];
+
+let url_usuario = get_url("adm_usuario", "get_usuario", {}, 0);
+
+getData(url_usuario).then(user => {
+    const filtro_adm_calendario = [
+        {
+            "key": "adm_usuario.id",
+            "valor": user
+        }
+    ];
+
+    getData(url).then(data => {
+        permisos = data.data;
+        const table_adm_calendario = table('adm_calendario', columns_adm_calendario, filtro_adm_calendario, [], callback_adm_calendario, false);
+    }).finally(() => {
+        loaderOverlay.remove();
+    });
+})
+
 const columns_adm_calendario = [
     {
         title: "Id",
@@ -26,31 +59,9 @@ const columns_adm_calendario = [
     }
 ];
 
-const filtro_adm_calendario = [
-    {
-        "key": "adm_calendario.id",
-        "valor": registro_id
-    }
-];
 
-let getData = (url) => {
-    return fetch(url)
-        .then(response => response.json())
-        .catch(err => {
-            alert('Error al ejecutar');
-            console.error("ERROR: ", err.message);
-        });
-};
 
-let url = get_url("adm_calendario", "acciones_permitidas", {}, 0);
-let permisos = [];
 
-getData(url).then(data => {
-    permisos = data.data;
-    const table_adm_calendario = table('adm_calendario', columns_adm_calendario, [], [], callback_adm_calendario, false);
-}).finally(() => {
-
-});
 
 const callback_adm_calendario = (seccion, columns) => {
     return [
@@ -72,14 +83,15 @@ const callback_adm_calendario = (seccion, columns) => {
             render: function (data, type, row, meta) {
                 let links = '';
                 for (permiso of permisos) {
-                    let url_permiso = $(location).attr('href');
+                    let url_permiso = new URL($(location).attr('href'));
+
                     let sec = getParameterByName('seccion');
                     let acc = getParameterByName('accion');
                     let registro_id = getParameterByName('registro_id');
 
-                    url_permiso = url_permiso.replace(acc, permiso.adm_accion_descripcion);
-                    url_permiso = url_permiso.replace(sec, permiso.adm_seccion_descripcion);
-                    url_permiso = url_permiso.replace(registro_id, row[`adm_calentario_id`]);
+                    url_permiso.searchParams.set('accion', permiso.adm_accion_descripcion);
+                    url_permiso.searchParams.set('seccion', permiso.adm_seccion_descripcion);
+                    url_permiso.searchParams.set('registro_id', row['adm_calendario_id']);
 
                     links += `<a href="${url_permiso}">${permiso.adm_accion_titulo}</a>`;
                 }
