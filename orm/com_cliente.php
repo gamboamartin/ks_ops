@@ -83,7 +83,7 @@ class com_cliente extends \gamboamartin\comercial\models\com_cliente {
 
         if (isset($this->registro['regimen_fiscal'])) {
             $cat_sat_regimen_fiscal = (new cat_sat_regimen_fiscal(link: $this->link))->filtro_and(
-                filtro: ['cat_sat_regimen_fiscal.descripcion' => $this->registro['regimen_fiscal']]);
+                filtro: ['cat_sat_regimen_fiscal.alias' => $this->registro['regimen_fiscal']]);
             if(errores::$error){
                 return $this->error->error(mensaje: 'Error al obtener cat_sat_regimen_fiscal',data:  $cat_sat_regimen_fiscal);
             }
