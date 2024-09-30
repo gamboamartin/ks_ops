@@ -1,6 +1,7 @@
 <?php /** @var gamboamartin\acl\controllers\controlador_adm_evento $controlador  controlador en ejecucion */ ?>
 <?php use config\views; ?>
 
+<?php echo $controlador->inputs->adm_tipo_evento_id; ?>
 <?php echo $controlador->inputs->adm_calendario_id; ?>
 <?php echo $controlador->inputs->titulo; ?>
 <?php echo $controlador->inputs->fecha_inicio; ?>
