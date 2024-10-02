@@ -12,9 +12,17 @@
                     <form method="post" action="<?php echo $controlador->link_alta_etapa; ?>" class="form-additional">
                         <?php include (new views())->ruta_templates."head/subtitulo.php"; ?>
 
+                        <?php echo $controlador->inputs->adm_tipo_evento_id; ?>
                         <?php echo $controlador->inputs->pr_etapa_proceso_id; ?>
                         <?php echo $controlador->inputs->fecha; ?>
                         <?php echo $controlador->inputs->observaciones; ?>
+
+                        <div class="control-group col-sm-12">
+                            <div class="controls checkbox-item" >
+                                <input type="checkbox" name="generar_evento" id="generar_evento" value="1">
+                                <label for="generar_evento">Generar evento</label>
+                            </div>
+                        </div>
 
                         <div class="controls">
                             <button type="submit" class="btn btn-success" value="correo" name="btn_action_next">Alta</button><br>
