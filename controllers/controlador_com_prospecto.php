@@ -13,6 +13,7 @@ use base\controller\init;
 use config\generales;
 use config\google;
 use gamboamartin\administrador\models\adm_calendario;
+use gamboamartin\administrador\models\adm_evento;
 use gamboamartin\administrador\models\adm_tipo_evento;
 use gamboamartin\comercial\models\com_prospecto_etapa;
 use gamboamartin\errores\errores;
@@ -154,34 +155,43 @@ final class controlador_com_prospecto extends \gamboamartin\comercial\controller
         $calendario = (new google_calendar_api())->crear_calendario(access_token: $token['access_token'],
             summary: $summary, description: $description, timeZone: $timeZone, ssl_verify: google::GOOGLE_SSL_VERIFY);
 
-        $datos['titulo'] = $summary;
-        $datos['descripcion'] = $description;
-        $datos['calendario_id'] = $calendario['id'];
-        $datos['zona_horaria'] = $calendario['timeZone'];
+        $datos_ca['titulo'] = $summary;
+        $datos_ca['descripcion'] = $description;
+        $datos_ca['calendario_id'] = $calendario['id'];
+        $datos_ca['zona_horaria'] = $calendario['timeZone'];
 
-        $alta_calendario = $this->alta_calendario(registros: $datos);
+        $alta_calendario = $this->alta_calendario(registros: $datos_ca);
         if (errores::$error) {
             return $this->errores->error(mensaje: 'Error al dar de alta calendario', data: $alta_calendario);
         }
 
-        $_SESSION['calendario']['datos']['fecha_inicio'] = $datos['fecha'];
-        $_SESSION['calendario']['datos']['fecha_fin'] = $datos['fecha'];
+        $_SESSION['calendario']['datos']['fecha_inicio'] = $datos['fecha_inicio'] . ' ' . $datos['hora_inicio'];
+        $_SESSION['calendario']['datos']['fecha_fin'] = $datos['fecha_fin'] . ' ' . $datos['hora_fin'];
 
-        $start_datetime['dateTime'] = (new \DateTime($datos['fecha']))->format(\DateTime::ATOM);
+        $fecha_inicio = $datos['fecha_inicio'] . ' ' . $datos['hora_inicio'];
+        $fecha_fin = $datos['fecha_fin'] . ' ' . $datos['hora_fin'];
+
+        $start_datetime['dateTime'] = (new \DateTime($fecha_inicio))->format(\DateTime::ATOM);
         $start_datetime['timeZone'] = $timeZone;
-        $end_datetime['dateTime'] = (new \DateTime($datos['fecha']))->format(\DateTime::ATOM);
+        $end_datetime['dateTime'] = (new \DateTime($fecha_fin))->format(\DateTime::ATOM);
         $end_datetime['timeZone'] = $timeZone;
         $location = '';
+
+        $summary = $datos['titulo'];
+        $description = $datos['descripcion'];
 
         $evento = (new google_calendar_api())->crear_evento_calendario(access_token: $token['access_token'],
             calendar_id: $calendario['id'], summary: $summary, description: $description, location: $location,
             start_datetime: $start_datetime, end_datetime: $end_datetime,
             timeZone: $timeZone, ssl_verify: google::GOOGLE_SSL_VERIFY);
 
+        $datos_calendario['adm_tipo_evento_id'] = $datos['adm_tipo_evento_id'];
         $datos_calendario['titulo'] = $summary;
         $datos_calendario['descripcion'] = $description;
         $datos_calendario['adm_calendario_id'] = $alta_calendario->registro_id;
         $datos_calendario['evento_id'] = $evento['id'];
+        $datos_calendario['fecha_inicio'] = $fecha_inicio;
+        $datos_calendario['fecha_fin'] = $fecha_fin;
         $datos_calendario['zona_horaria'] = $calendario['timeZone'];
 
         $alta_calendario = $this->alta_evento_calendario(registros: $datos_calendario);
@@ -209,7 +219,7 @@ final class controlador_com_prospecto extends \gamboamartin\comercial\controller
 
     public function alta_evento_calendario(array $registros)
     {
-        $calendario = new adm_calendario(link: $this->link);
+        $calendario = new adm_evento(link: $this->link);
         $calendario->registro = $registros;
         $alta = $calendario->alta_bd();
         if (errores::$error) {
