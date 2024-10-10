@@ -14,6 +14,7 @@ use config\generales;
 use config\google;
 use gamboamartin\administrador\models\adm_calendario;
 use gamboamartin\administrador\models\adm_evento;
+use gamboamartin\administrador\models\adm_seccion;
 use gamboamartin\administrador\models\adm_tipo_evento;
 use gamboamartin\comercial\models\com_prospecto_etapa;
 use gamboamartin\errores\errores;
@@ -134,36 +135,71 @@ final class controlador_com_prospecto extends \gamboamartin\comercial\controller
         return $r_alta_com_prospecto_etapa;
     }
 
-    public function crear_calendario_google(): array
+    public function crear_calendario_google(): array|stdClass
     {
-        $datos = $_SESSION['calendario']['datos'];
-
-        $tipo_evento = (new adm_tipo_evento(link: $this->link))->registro(registro_id: $datos['adm_tipo_evento_id']);
+        $filtro['adm_seccion.descripcion'] = $this->tabla;
+        $seccion = (new adm_seccion(link: $this->link))->filtro_and(filtro: $filtro);
         if (errores::$error) {
-            return $this->errores->error(mensaje: 'Error al obtener tipo de evento', data: $tipo_evento);
+            $error = $this->errores->error(mensaje: 'Error al obtener sección', data: $seccion);
+            print_r($error);exit();
         }
+
+        if ($seccion->n_registros == 0) {
+            $error = $this->errores->error(mensaje: 'No se encontró la sección', data: $seccion);
+            print_r($error);exit();
+        }
+
+        $seccion_id = $seccion->registros[0]['adm_seccion_id'];
+
+        $filtro['adm_seccion.id'] = $seccion_id;
+        $filtro['adm_usuario_id'] = $_SESSION['usuario_id'];
+        $exite_calendario = (new adm_calendario(link: $this->link))->filtro_and(filtro: $filtro);
+        if (errores::$error) {
+            $error = $this->errores->error(mensaje: 'Error al obtener calendario', data: $exite_calendario);
+            print_r($error);exit();
+        }
+
+        $datos = $_SESSION['calendario']['datos'];
+        $calendario_id = $exite_calendario->registros[0]['adm_calendario_id'] ?? 0;
+        $calendario_google_id = $exite_calendario->registros[0]['adm_calendario_calendario_id'] ?? 0;
+        $calendario_google_timeZone = $exite_calendario->registros[0]['adm_calendario_zona_horaria'] ?? '';
 
         $token = (new google_calendar_api())->get_access_token(client_id: google::GOOGLE_CLIENT_ID,
             redirect_uri: $_SESSION['calendario']['link_google_calendar_redirect'], client_secret: google::GOOGLE_CLIENT_SECRET,
             code: $_SESSION['calendario']['code'], ssl_verify: google::GOOGLE_SSL_VERIFY);
 
-        $timeZone = (new google_calendar_api())->get_calendar_timezone(access_token: $token['access_token'], ssl_verify: google::GOOGLE_SSL_VERIFY);
+        $timeZone = (new google_calendar_api())->get_calendar_timezone(access_token: $token['access_token'],
+            ssl_verify: google::GOOGLE_SSL_VERIFY);
 
-        $summary = $tipo_evento['adm_tipo_evento_descripcion'];
-        $description = "Calendario para eventos de tipo: $summary";
+        if ($exite_calendario->n_registros == 0) {
+            $summary = "Eventos de prospección";
+            $description = "Calendario para eventos de tipo prospección";
 
-        $calendario = (new google_calendar_api())->crear_calendario(access_token: $token['access_token'],
-            summary: $summary, description: $description, timeZone: $timeZone, ssl_verify: google::GOOGLE_SSL_VERIFY);
+            $calendario = (new google_calendar_api())->crear_calendario(access_token: $token['access_token'],
+                summary: $summary, description: $description, timeZone: $timeZone, ssl_verify: google::GOOGLE_SSL_VERIFY);
 
-        $datos_ca['titulo'] = $summary;
-        $datos_ca['descripcion'] = $description;
-        $datos_ca['calendario_id'] = $calendario['id'];
-        $datos_ca['zona_horaria'] = $calendario['timeZone'];
+            $datos_ca['titulo'] = $summary;
+            $datos_ca['descripcion'] = $description;
+            $datos_ca['calendario_id'] = $calendario['id'];
+            $datos_ca['zona_horaria'] = $calendario['timeZone'];
+            $datos_ca['adm_seccion_id'] = $seccion_id;
+            $datos_ca['adm_usuario_id'] = $_SESSION['usuario_id'];
 
-        $alta_calendario = $this->alta_calendario(registros: $datos_ca);
-        if (errores::$error) {
-            return $this->errores->error(mensaje: 'Error al dar de alta calendario', data: $alta_calendario);
+            $alta_calendario = $this->alta_calendario(registros: $datos_ca);
+            if (errores::$error) {
+                $error = $this->errores->error(mensaje: 'Error al dar de alta calendario', data: $alta_calendario);
+                print_r($error);exit();
+            }
+
+            $calendario_id = $alta_calendario->registro_id;
+            $calendario_google_id = $calendario['id'];
+            $calendario_google_timeZone = $calendario['timeZone'];
         }
+
+        /*$tipo_evento = (new adm_tipo_evento(link: $this->link))->registro(registro_id: $datos['adm_tipo_evento_id']);
+        if (errores::$error) {
+            return $this->errores->error(mensaje: 'Error al obtener tipo de evento', data: $tipo_evento);
+        }*/
 
         $_SESSION['calendario']['datos']['fecha_inicio'] = $datos['fecha_inicio'] . ' ' . $datos['hora_inicio'];
         $_SESSION['calendario']['datos']['fecha_fin'] = $datos['fecha_fin'] . ' ' . $datos['hora_fin'];
@@ -181,28 +217,28 @@ final class controlador_com_prospecto extends \gamboamartin\comercial\controller
         $description = $datos['descripcion'];
 
         $evento = (new google_calendar_api())->crear_evento_calendario(access_token: $token['access_token'],
-            calendar_id: $calendario['id'], summary: $summary, description: $description, location: $location,
+            calendar_id: $calendario_google_id, summary: $summary, description: $description, location: $location,
             start_datetime: $start_datetime, end_datetime: $end_datetime,
             timeZone: $timeZone, ssl_verify: google::GOOGLE_SSL_VERIFY);
 
         $datos_calendario['adm_tipo_evento_id'] = $datos['adm_tipo_evento_id'];
         $datos_calendario['titulo'] = $summary;
         $datos_calendario['descripcion'] = $description;
-        $datos_calendario['adm_calendario_id'] = $alta_calendario->registro_id;
+        $datos_calendario['adm_calendario_id'] = $calendario_id;
         $datos_calendario['evento_id'] = $evento['id'];
         $datos_calendario['fecha_inicio'] = $fecha_inicio;
         $datos_calendario['fecha_fin'] = $fecha_fin;
-        $datos_calendario['zona_horaria'] = $calendario['timeZone'];
+        $datos_calendario['zona_horaria'] = $calendario_google_timeZone;
 
-        $alta_calendario = $this->alta_evento_calendario(registros: $datos_calendario);
+        $alta_evento = $this->alta_evento_calendario(registros: $datos_calendario);
         if (errores::$error) {
-            return $this->errores->error(mensaje: 'Error al dar de alta evento calendario', data: $alta_calendario);
+            return $this->errores->error(mensaje: 'Error al dar de alta evento calendario', data: $alta_evento);
         }
 
         $_POST = $_SESSION['calendario']['datos'];
         unset($_SESSION['calendario']);
 
-        return $calendario;
+        return $alta_evento;
     }
 
     public function alta_calendario(array $registros)
