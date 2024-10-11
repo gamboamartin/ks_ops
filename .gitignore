@@ -51,6 +51,7 @@ config/generales.php
 config/views.php
 config/pac.php
 config/google.php
+config/telegram.php
 vendor/
 archivos
 .idea
