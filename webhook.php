@@ -87,32 +87,35 @@ if ($sessions[$chat_id]['estado'] === 'inicio' && strtolower($text) === '/start'
         $sessions[$chat_id]['estado'] = 'espera_usuario';
         $mensaje = 'No se encontraron registros con las credenciales ingresadas. Por favor, ingresa tu usuario nuevamente:';
     } else {
+        $usuario = $usuario->registros[0];
         session_start();
 
         $_SESSION['activa'] = 1;
-        $_SESSION['grupo_id'] = $usuario->registros[0]['adm_grupo_id'];
-        $_SESSION['usuario_id'] = $usuario->registros[0]['adm_usuario_id'];
-        $_SESSION['nombre_usuario'] = $usuario->registros[0]['adm_usuario_nombre_completo'];
-        $_SESSION['adm_grupo_root'] = $usuario->registros[0]['adm_grupo_root'];
+        $_SESSION['grupo_id'] = $usuario['adm_grupo_id'];
+        $_SESSION['usuario_id'] = $usuario['adm_usuario_id'];
+        $_SESSION['nombre_usuario'] = $usuario['adm_usuario_nombre_completo'];
+        $_SESSION['adm_grupo_root'] = $usuario['adm_grupo_root'];
 
         $data_get = (new init())->asigna_session_get();
-        if(errores::$error){
-            if ($link->inTransaction()) {
-                $link->rollBack();
-            }
-            $error = (new errores())->error(mensaje: 'Error al actualizar usuario', data: $data_get);
-            print_r($error);
-            exit;
+        if (errores::$error) {
+            $mensaje = 'Error al actualizar usuario';
+            (new \gamboamartin\plugins\telegram_api())->enviar_mensaje(
+                bot_token: '7427554923:AAFu9G4vZ5Jcj-SvWL898sp9iJOxxModKAw',
+                chat_id: $chat_id,
+                mensaje: $mensaje
+            );
+            file_put_contents($file_path, json_encode($sessions, JSON_PRETTY_PRINT));
+            exit();
         }
 
         $sessions[$chat_id]['estado'] = 'registrado';
         $actualizar_usuario['id_chat_telegram'] = $chat_id;
 
         $adm_usuario = new \gamboamartin\administrador\models\adm_usuario($link);
-        $adm_usuario->usuario_id = $usuario->registros[0]['adm_usuario_id'];
+        $adm_usuario->usuario_id = $usuario['adm_usuario_id'];
         $proceso = $adm_usuario->modifica_bd(
             registro: $actualizar_usuario,
-            id: $usuario->registros[0]['adm_usuario_id']
+            id: $usuario['adm_usuario_id']
         );
 
         if (errores::$error) {
@@ -131,4 +134,6 @@ if ($sessions[$chat_id]['estado'] === 'inicio' && strtolower($text) === '/start'
 
 file_put_contents($file_path, json_encode($sessions, JSON_PRETTY_PRINT));
 
-
+if ($link->inTransaction()) {
+    $link->commit();
+}
