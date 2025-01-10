@@ -42,7 +42,7 @@ final class controlador_com_cliente extends \gamboamartin\comercial\controllers\
     {
         parent::__construct(link: $link, html: $html, paths_conf: $paths_conf);
         $this->modelo = new com_cliente(link: $this->link);
-
+        $this->lista_get_data = true;
         $this->childrens_data = array();
     }
 
